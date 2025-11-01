@@ -1118,7 +1118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8523ac6c7ab0b5641af0c9a2e3d45aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  gameSceneName: N1_A
+  gameSceneName: Level1
   loadingSceneName: Loading
   panelMain: {fileID: 1794323522}
   panelOptions: {fileID: 1168450884}
