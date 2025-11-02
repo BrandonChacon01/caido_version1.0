@@ -25,6 +25,14 @@ public class ProceduralLevelGenerator : MonoBehaviour
     [Tooltip("Transform contenedor para los items")]
     public Transform ItemsContainer;
 
+    [Header("Prefabs de Obstáculos")]
+    [Tooltip("Prefab de obstáculos dañinos (picos, etc.)")]
+    public GameObject ObstaclePrefab;
+
+    [Tooltip("Probabilidad de spawner obstáculos (0-1)")]
+    [Range(0f, 0.5f)]
+    public float ObstacleSpawnRate = 0.15f;
+
     [Tooltip("Cámara principal (se ajustará el color de fondo)")]
     public Camera MainCamera;
 
@@ -39,6 +47,9 @@ public class ProceduralLevelGenerator : MonoBehaviour
     private float currentXPosition = 0f;
     private float currentGroundHeight = 0f;
     private List<GameObject> spawnedObjects = new List<GameObject>();
+
+    private Transform ObstaclesContainer;
+
 
     private void Awake()
     {
@@ -83,6 +94,15 @@ public class ProceduralLevelGenerator : MonoBehaviour
         if (MainCamera == null)
         {
             MainCamera = Camera.main;
+        }
+
+        // Dentro del método SetupContainers(), después de crear ItemsContainer
+
+        if (ObstaclesContainer == null)
+        {
+            GameObject obstaclesObj = new GameObject("--- OBSTACLES ---");
+            ObstaclesContainer = obstaclesObj.transform;
+            ObstaclesContainer.SetParent(transform);
         }
     }
 
@@ -186,6 +206,12 @@ public class ProceduralLevelGenerator : MonoBehaviour
         {
             GenerateItemForChunk(chunkStartX, CurrentLevelSettings.ChunkWidth, currentGroundHeight);
         }
+
+        // Generar obstáculos en este chunk (no en gaps)
+        if (!hasGap && UnityEngine.Random.value <= ObstacleSpawnRate)
+        {
+            GenerateObstacleForChunk(chunkStartX, CurrentLevelSettings.ChunkWidth, currentGroundHeight);
+        }
     }
 
     /// <summary>
@@ -258,7 +284,7 @@ public class ProceduralLevelGenerator : MonoBehaviour
     }
 
     /// <summary>
-    /// Genera la bandera de finalización al final del nivel
+    /// Genera la bandera de finalización al final del nivel CON plataforma
     /// </summary>
     private void GenerateLevelEndFlag()
     {
@@ -268,12 +294,17 @@ public class ProceduralLevelGenerator : MonoBehaviour
             return;
         }
 
-        // Posición al final del nivel
-        Vector3 flagPosition = new Vector3(currentXPosition + 5f, currentGroundHeight + 1f, 0f);
+        // Asegurar que hay suelo debajo de la bandera
+        // Generar plataforma final de 5 bloques
+        float flagPlatformWidth = 5f;
+        GeneratePlatforms(currentXPosition, flagPlatformWidth, currentGroundHeight);
+
+        // Posición de la bandera en el centro de la plataforma final
+        Vector3 flagPosition = new Vector3(currentXPosition + (flagPlatformWidth / 2f), currentGroundHeight + 1f, 0f);
         GameObject flag = Instantiate(LevelEndFlagPrefab, flagPosition, Quaternion.identity, transform);
         spawnedObjects.Add(flag);
 
-        UnityEngine.Debug.Log($"[ProceduralLevelGenerator] Bandera de finalización colocada en X: {flagPosition.x}");
+        UnityEngine.Debug.Log($"[ProceduralLevelGenerator] Bandera de finalización colocada en X: {flagPosition.x} con plataforma de {flagPlatformWidth} bloques");
     }
 
     /// <summary>
@@ -315,5 +346,27 @@ public class ProceduralLevelGenerator : MonoBehaviour
         Vector3 start = new Vector3(-10f, CurrentLevelSettings.GroundHeight, 0f);
         Vector3 end = new Vector3(-10f + totalLength, CurrentLevelSettings.GroundHeight, 0f);
         Gizmos.DrawLine(start, end);
+    }
+
+    /// <summary>
+    /// Genera obstáculos para un chunk
+    /// </summary>
+    private void GenerateObstacleForChunk(float startX, float width, float groundHeight)
+    {
+        if (ObstaclePrefab == null) return;
+
+        // Generar 1-2 obstáculos por chunk
+        int obstacleCount = UnityEngine.Random.Range(1, 3);
+
+        for (int i = 0; i < obstacleCount; i++)
+        {
+            // Posición aleatoria dentro del chunk
+            float randomX = UnityEngine.Random.Range(startX + 1f, startX + width - 1f);
+            float obstacleHeight = groundHeight + 0.5f; // Justo encima del suelo
+            Vector3 spawnPosition = new Vector3(randomX, obstacleHeight, 0f);
+
+            GameObject obstacle = Instantiate(ObstaclePrefab, spawnPosition, Quaternion.identity, ObstaclesContainer);
+            spawnedObjects.Add(obstacle);
+        }
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DeathZone : MonoBehaviour
+public class OldDeathZone : MonoBehaviour
 {
     // Esta función se activa automáticamente cuando CUALQUIER
     // otro collider 2D (que tenga un Rigidbody2D) entra en este trigger.
