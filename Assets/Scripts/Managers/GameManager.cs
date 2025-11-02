@@ -1,40 +1,41 @@
-using System.Diagnostics;
+ï»¿using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Debug = UnityEngine.Debug;  // â† AGREGA ESTA LÃNEA para resolver la ambigÃ¼edad
 
 /// <summary>
 /// GameManager - Singleton que controla el estado global del juego
-/// Mantiene información del nivel actual y configuración entre escenas
+/// Mantiene informaciÃ³n del nivel actual y configuraciÃ³n entre escenas
 /// </summary>
 public class GameManager : MonoBehaviour
 {
     // Singleton Instance
     public static GameManager Instance { get; private set; }
 
-    [Header("Configuración de Niveles")]
+    [Header("ConfiguraciÃ³n de Niveles")]
     [Tooltip("Nivel actual del jugador (1-5)")]
     public int CurrentLevel = 1;
 
-    [Tooltip("Número total de niveles en el juego")]
+    [Tooltip("NÃºmero total de niveles en el juego")]
     public int TotalLevels = 5;
 
-    [Header("Configuración del Jugador")]
-    [Tooltip("Prefab del jugador que se spawneará en cada nivel")]
+    [Header("ConfiguraciÃ³n del Jugador")]
+    [Tooltip("Prefab del jugador que se spawnearÃ¡ en cada nivel")]
     public GameObject PlayerPrefab;
 
-    [Tooltip("Posición de spawn inicial del jugador")]
+    [Tooltip("PosiciÃ³n de spawn inicial del jugador")]
     public Vector3 PlayerSpawnPosition = new Vector3(-8f, 0f, 0f);
 
     [Header("Estado del Juego")]
     public bool IsGamePaused = false;
 
-    // Eventos para comunicación entre sistemas
+    // Eventos para comunicaciÃ³n entre sistemas
     public delegate void LevelCompleted(int levelNumber);
     public static event LevelCompleted OnLevelCompleted;
 
     private void Awake()
     {
-        // Implementación del patrón Singleton
+        // ImplementaciÃ³n del patrÃ³n Singleton
         if (Instance == null)
         {
             Instance = this;
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Inicialización
+        // InicializaciÃ³n
         Debug.Log($"[GameManager] Iniciado - Nivel Actual: {CurrentLevel}");
     }
 
@@ -62,9 +63,9 @@ public class GameManager : MonoBehaviour
 
         if (CurrentLevel > TotalLevels)
         {
-            // Juego completado - volver al menú principal
-            Debug.Log("[GameManager] ¡Juego Completado! Volviendo al menú principal...");
-            CurrentLevel = 1; // Reiniciar para próxima partida
+            // Juego completado - volver al menÃº principal
+            Debug.Log("[GameManager] Â¡Juego Completado! Volviendo al menÃº principal...");
+            CurrentLevel = 1; // Reiniciar para prÃ³xima partida
             SceneManager.LoadScene("MainMenu");
         }
         else
@@ -88,7 +89,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Carga un nivel específico
+    /// Carga un nivel especÃ­fico
     /// </summary>
     public void LoadLevel(int levelNumber)
     {
@@ -109,10 +110,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CompleteLevel()
     {
-        Debug.Log($"[GameManager] ¡Nivel {CurrentLevel} completado!");
+        Debug.Log($"[GameManager] Â¡Nivel {CurrentLevel} completado!");
         OnLevelCompleted?.Invoke(CurrentLevel);
 
-        // Pequeña pausa antes de cargar el siguiente nivel
+        // PequeÃ±a pausa antes de cargar el siguiente nivel
         Invoke(nameof(LoadNextLevel), 2f);
     }
 
@@ -126,11 +127,11 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Vuelve al menú principal
+    /// Vuelve al menÃº principal
     /// </summary>
     public void ReturnToMainMenu()
     {
-        Debug.Log("[GameManager] Volviendo al menú principal...");
+        Debug.Log("[GameManager] Volviendo al menÃº principal...");
         SceneManager.LoadScene("MainMenu");
     }
 
