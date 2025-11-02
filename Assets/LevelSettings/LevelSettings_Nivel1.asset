@@ -33,9 +33,9 @@ MonoBehaviour:
   HeightChangeProbability: 0.01
   MaxHeightIncrease: 0.4
   MaxHeightDecrease: 0.8
-  BackgroundColor: {r: 0.53, g: 0.81, b: 0.92, a: 1}
+  BackgroundColor: {r: 1, g: 1, b: 1, a: 1}
   PlatformColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  BackgroundSprite: {fileID: 0}
+  BackgroundSprite: {fileID: -4045580832501845524, guid: efe00a9496dfcc646bbee9024d553c1b, type: 3}
   TilemapSprites: []
   VisualNotes: "NOTAS VISUALES:\n- BackgroundColor: Cambiar desde Inspector para
     cada nivel\n- BackgroundSprite: Arrastrar sprite del fondo aqu\xED\n- TilemapSprites:
