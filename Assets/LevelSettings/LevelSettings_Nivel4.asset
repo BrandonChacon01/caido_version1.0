@@ -21,7 +21,7 @@ MonoBehaviour:
   MaxEnemiesPerChunk: 3
   ItemSpawnRate: 0.18
   EnemyPrefabs:
-  - {fileID: 9019726392077895016, guid: b4ebd4bb61e1b7d4e91a77f4060da491, type: 3}
+  - {fileID: 892052597856348500, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
   ItemPrefabs:
   - {fileID: 7303883299899987135, guid: f8a243ba6646ebd479d1b520e7640da3, type: 3}
   - {fileID: 4001377872378432191, guid: 81e5b125fbff1744cab39832b08e2a42, type: 3}
