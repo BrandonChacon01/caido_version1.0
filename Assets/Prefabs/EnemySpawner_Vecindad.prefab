@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6235895810186447220}
   - component: {fileID: 4273514094246782937}
-  - component: {fileID: 4533991703203811054}
+  - component: {fileID: 1304025588153848176}
   m_Layer: 0
-  m_Name: EnemySpawner_Carro
+  m_Name: EnemySpawner_Vecindad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -80,18 +80,18 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a3d3fa4bc23f4284e8b54939bb57629b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f91e52387ffa7f34085152121e8141af, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.375, y: 0.8125}
+  m_Size: {x: 0.8, y: 0.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4533991703203811054
+--- !u!114 &1304025588153848176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -100,8 +100,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 892052597856348500}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b678fa46f9f4194aa365d8d825f940d, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f6a40d8dd4ee2d43b602825bf426d4a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  enemyPrefab: {fileID: 9019726392077895016, guid: b4ebd4bb61e1b7d4e91a77f4060da491, type: 3}
-  spawnInterval: 5
+  m_EditorClassIdentifier: Assembly-CSharp::MultiEnemySpawner
+  enemyPrefabs:
+  - {fileID: 0}
+  spawnInterval: 10

@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 0ac9b871abb49a343909594223eb01f1
+guid: 3d5f89cff69c236419fa63555fd763a1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5008706240889234426
-    second: PerroStill (2)_0
+      213: 7700295212936664567
+    second: Perrito_Run_0
+  - first:
+      213: -449829310899532341
+    second: Perrito_Run_1
+  - first:
+      213: 4101542794765965474
+    second: Perrito_Run_2
+  - first:
+      213: -6652153876710135066
+    second: Perrito_Run_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +55,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +122,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PerroStill (2)_0
+      name: Perrito_Run_0
       rect:
         serializedVersion: 2
-        x: 343
-        y: 122
-        width: 811
-        height: 661
+        x: 0
+        y: 0
+        width: 14
+        height: 13
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +137,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 60cd38f06308d7ab0800000000000000
-      internalID: -5008706240889234426
+      spriteID: 7f51bb0c2b1fcda60800000000000000
+      internalID: 7700295212936664567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Perrito_Run_1
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 0
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcd464200a2e1c9f0800000000000000
+      internalID: -449829310899532341
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Perrito_Run_2
+      rect:
+        serializedVersion: 2
+        x: 31
+        y: 0
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a89611e07b9be830800000000000000
+      internalID: 4101542794765965474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Perrito_Run_3
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 0
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea64733b4dcea3a0800000000000000
+      internalID: -6652153876710135066
       vertices: []
       indices: 
       edges: []
@@ -148,7 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PerroStill (2)_0: -5008706240889234426
+      Perrito_Run_0: 7700295212936664567
+      Perrito_Run_1: -449829310899532341
+      Perrito_Run_2: 4101542794765965474
+      Perrito_Run_3: -6652153876710135066
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

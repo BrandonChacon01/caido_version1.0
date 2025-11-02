@@ -3,31 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PerroAI : CharacterStats
+public class VecinoAI : CharacterStats
 {
     [Header("Referencias")]
     [SerializeField] public Transform player;
+    [SerializeField] private GameObject vecinoPrefab;
+
+    [Header("IA - ConfiguraciÛn")]
+    [SerializeField] private float detectionRadius = 8f;
+    [SerializeField] private float contactDamage = 2f;
+    [SerializeField] private float attackWaitTime = 1.5f;
+    [SerializeField] private float baseScale = 1.0f;
+
+    [Header("DetecciÛn de Entorno (Ledge Check)")]
+    [SerializeField] private Transform ledgeCheck;
+    [SerializeField] private float checkDistance = 0.1f;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Transform groundCheck;
-
-    [Header("IA - Configuraci√≥n")]
-    [SerializeField] private float detectionRadius = 10f;
-    [SerializeField] private float contactDamage = 1f;
-    [SerializeField] private float attackWaitTime = 3f;
-    [SerializeField] private float baseScale = 0.15f;
-
-    [Header("IA - Salto")]
-    [SerializeField] private float jumpForce = 2f;
-    [SerializeField] private float jumpInterval = 1.5f;
-    [SerializeField] private float checkRadius = 0.2f;
-    private float jumpTimer;
-    private bool isGrounded;
 
     [Header("UI")]
     [SerializeField] private Slider healthSlider;
 
     private bool isAttacking = false;
     private float currentMoveDirection = 0f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -45,7 +43,7 @@ public class PerroAI : CharacterStats
             }
             catch
             {
-                Debug.LogError("PerroAI: No se encontr√≥ al jugador. Aseg√∫rate de que el jugador tenga el Tag 'Player'.");
+                Debug.LogError("VecinoAI: No se encontrÛ al jugador.");
             }
         }
 
@@ -54,10 +52,7 @@ public class PerroAI : CharacterStats
             healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
         }
-
-        jumpTimer = jumpInterval;
     }
-
     void Update()
     {
         if (player == null) return;
@@ -65,12 +60,9 @@ public class PerroAI : CharacterStats
         if (isAttacking)
         {
             currentMoveDirection = 0f;
-            anim.SetBool("isMoving", false);
+            if (anim != null) anim.SetBool("isMoving", false);
             return;
         }
-
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-        if (anim != null) anim.SetBool("isGrounded", isGrounded);
 
         float distance = Vector2.Distance(transform.position, player.position);
         Vector3 directionToPlayer = player.position - transform.position;
@@ -78,14 +70,7 @@ public class PerroAI : CharacterStats
         if (distance <= detectionRadius)
         {
             currentMoveDirection = Mathf.Sign(directionToPlayer.x);
-            anim.SetBool("isMoving", true);
-
-            jumpTimer -= Time.deltaTime;
-            if (jumpTimer <= 0 && isGrounded)
-            {
-                Jump();
-                jumpTimer = jumpInterval;
-            }
+            if (anim != null) anim.SetBool("isMoving", true);
 
             if (directionToPlayer.x > 0.0f)
             {
@@ -99,26 +84,28 @@ public class PerroAI : CharacterStats
         else
         {
             currentMoveDirection = 0f;
-            anim.SetBool("isMoving", false);
+            if (anim != null) anim.SetBool("isMoving", false);
         }
     }
-
     void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(currentMoveDirection * moveSpeed, rb.linearVelocity.y);
+        float actualMoveDirection = currentMoveDirection;
+
+        if (actualMoveDirection != 0f)
+        {
+            bool isGroundedAhead = Physics2D.OverlapCircle(ledgeCheck.position, checkDistance, groundLayer);
+
+            if (!isGroundedAhead)
+            {
+                actualMoveDirection = 0f;
+                if (anim != null) anim.SetBool("isMoving", false);
+            }
+        }
+
+        rb.linearVelocity = new Vector2(actualMoveDirection * moveSpeed, rb.linearVelocity.y);
     }
 
-    // Aplica la fuerza de salto y activa la animaci√≥n
-    private void Jump()
-    {
-        if (anim != null) anim.SetTrigger("Jump");
-
-        float horizontalDirection = Mathf.Sign(player.position.x - transform.position.x);
-        Vector2 jumpDirection = new Vector2(horizontalDirection, 1.5f).normalized;
-        rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
-    }
-
-    // M√©todo para recibir da√±o de las balas del jugador
+    // MÈtodo para recibir daÒo de las balas del jugador
     public void Hit(float damage)
     {
         base.TakeDamage(damage);
@@ -129,7 +116,7 @@ public class PerroAI : CharacterStats
         }
     }
 
-    // M√©todo para hacer da√±o por contacto
+    // MÈtodo para hacer daÒo por contacto
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player") && !isAttacking)
@@ -142,15 +129,30 @@ public class PerroAI : CharacterStats
         }
     }
 
-    // Corrutina que aplica el da√±o y la espera
+    // Corrutina que aplica el daÒo, spawnea y espera
     private IEnumerator AttackPause(PlayerController playerScript)
     {
         isAttacking = true;
-
         playerScript.Hit(contactDamage);
 
-        yield return new WaitForSeconds(attackWaitTime);
+        if (vecinoPrefab != null)
+        {
+            Vector3 spawnPosition = transform.position + new Vector3(Random.Range(-0.5f, 0.5f), 0.0f, 0);
 
+            GameObject newVecinoObj = Instantiate(vecinoPrefab, spawnPosition, Quaternion.identity);
+
+            VecinoAI newVecinoAI = newVecinoObj.GetComponent<VecinoAI>();
+            CharacterStats newVecinoStats = newVecinoObj.GetComponent<CharacterStats>();
+
+            if (newVecinoAI != null && newVecinoStats != null)
+            {
+                newVecinoAI.player = this.player;
+                newVecinoStats.moveSpeed = this.moveSpeed * 0.80f;
+                newVecinoAI.vecinoPrefab = null;
+            }
+        }
+
+        yield return new WaitForSeconds(attackWaitTime);
         isAttacking = false;
     }
 
@@ -160,10 +162,10 @@ public class PerroAI : CharacterStats
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
 
-        if (groundCheck != null)
+        if (ledgeCheck != null)
         {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(groundCheck.position, checkRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(ledgeCheck.position, checkDistance);
         }
     }
 }
