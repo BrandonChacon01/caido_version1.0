@@ -151,5 +151,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleSpike
   Damage: 1
-  ObstacleColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
-  HitSound: {fileID: 0}
+  ObstacleColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
+  HitSound: {fileID: 8300000, guid: 052fc4220ff0f1b41974961cd7ebd6c5, type: 3}

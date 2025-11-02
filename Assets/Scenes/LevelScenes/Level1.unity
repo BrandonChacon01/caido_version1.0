@@ -173,7 +173,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7647872505149707253, guid: c7adec07e7225d34f8fff0e15b9a9e9f, type: 3}
       propertyPath: Speed
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7647872505149707253, guid: c7adec07e7225d34f8fff0e15b9a9e9f, type: 3}
       propertyPath: heatBar
@@ -1220,7 +1220,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 18.692219, y: 1}
+  m_Size: {x: 200, y: 1}
   m_EdgeRadius: 0
 --- !u!4 &1126409956
 Transform:
