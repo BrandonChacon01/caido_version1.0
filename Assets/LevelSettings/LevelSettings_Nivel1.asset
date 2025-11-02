@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91a094847427e8d4b9cbdcd6d3d98f58, type: 3}
+  m_Name: LevelSettings_Nivel1
+  m_EditorClassIdentifier: Assembly-CSharp::LevelSettings
+  LevelNumber: 1
+  LevelName: Nivel 1
+  LevelLengthInChunks: 10
+  ChunkWidth: 10
+  EnemySpawnRate: 0.25
+  MinEnemiesPerChunk: 0
+  MaxEnemiesPerChunk: 1
+  ItemSpawnRate: 0.4
+  EnemyPrefabs:
+  - {fileID: 892052597856348500, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
+  ItemPrefabs:
+  - {fileID: 7303883299899987135, guid: f8a243ba6646ebd479d1b520e7640da3, type: 3}
+  - {fileID: 4001377872378432191, guid: 81e5b125fbff1744cab39832b08e2a42, type: 3}
+  GroundPrefab: {fileID: 9098940227877222544, guid: f201ffc1a0f97be44a4c220db78071fa, type: 3}
+  GroundHeight: 0
+  GapProbability: 0.08
+  MinGapSize: 1
+  MaxGapSize: 2
+  HeightChangeProbability: 0.01
+  MaxHeightIncrease: 0.4
+  MaxHeightDecrease: 0.8
+  BackgroundColor: {r: 0.38039216, g: 0.14901961, b: 0.19607843, a: 1}
+  PlatformColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  BackgroundSprite: {fileID: -4045580832501845524, guid: efe00a9496dfcc646bbee9024d553c1b, type: 3}
+  TilemapSprites: []
+  VisualNotes: "NOTAS VISUALES:\n- BackgroundColor: Cambiar desde Inspector para
+    cada nivel\n- BackgroundSprite: Arrastrar sprite del fondo aqu\xED\n- TilemapSprites:
+    Agregar tiles espec\xEDficos del nivel"
