@@ -5,8 +5,8 @@ public class EnemySpawner : MonoBehaviour
 {
     // --- Variables Configurables ---
     [Header("Configuración del Spawner")]
-    [SerializeField] private GameObject enemyPrefab; // Arrastra tu Prefab del "Grunt" aquí
-    [SerializeField] private float spawnInterval = 10f;  // El tiempo (5 seg) entre cada spawn
+    [SerializeField] private GameObject enemyPrefab; 
+    [SerializeField] private float spawnInterval = 10f; 
 
     // --- Referencia Interna ---
     private Transform playerTransform; // Para decirle al nuevo enemigo a quién seguir
@@ -14,8 +14,6 @@ public class EnemySpawner : MonoBehaviour
     // Awake se llama antes que Start. Es ideal para encontrar referencias.
     void Awake()
     {
-        // Buscamos al jugador por su Etiqueta (Tag).
-        // ¡Asegúrate de que tu Player tenga el Tag "Player"!
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObj != null)
@@ -65,10 +63,10 @@ public class EnemySpawner : MonoBehaviour
         GameObject newEnemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
 
         // 3. ¡MUY IMPORTANTE! Le decimos al nuevo enemigo dónde está el jugador.
-        GruntScript grunt = newEnemy.GetComponent<GruntScript>();
-        if (grunt != null)
+        CholitoAI cholo = newEnemy.GetComponent<CholitoAI>();
+        if (cholo != null)
         {
-            grunt.Player = playerTransform;
+            cholo.Player = playerTransform;
         }
     }
 }
