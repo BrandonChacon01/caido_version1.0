@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 849ef90d475da7e4d9a15ffb12ff1270
+guid: 20a14d227339fa74fb9ae2cac17b1412
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5083785623461068077
-    second: "Alba\xF1ilStill_0"
+      213: 953358181811349348
+    second: "Alba\xF1ilWalk_0"
+  - first:
+      213: 3284424263118269555
+    second: "Alba\xF1ilWalk_1"
+  - first:
+      213: 1827207695885236177
+    second: "Alba\xF1ilWalk_2"
+  - first:
+      213: -3615805732291094014
+    second: "Alba\xF1ilWalk_3"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,13 +55,13 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 2, y: 0, z: 0, w: 0}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -113,12 +122,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "Alba\xF1ilStill_0"
+      name: "Alba\xF1ilWalk_0"
       rect:
         serializedVersion: 2
         x: 1
         y: 0
-        width: 15
+        width: 14
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -128,8 +137,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d2d72a8e61c3d8640800000000000000
-      internalID: 5083785623461068077
+      spriteID: 467e39a17320b3d00800000000000000
+      internalID: 953358181811349348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Alba\xF1ilWalk_1"
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 0
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37ca6d6377e949d20800000000000000
+      internalID: 3284424263118269555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Alba\xF1ilWalk_2"
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 0
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d7791ce7bb8b5910800000000000000
+      internalID: 1827207695885236177
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Alba\xF1ilWalk_3"
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 0
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20ad7f508d312ddc0800000000000000
+      internalID: -3615805732291094014
       vertices: []
       indices: 
       edges: []
@@ -138,8 +213,8 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    spriteID: 4f149397732a2b24989c062bae546d1e
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -148,7 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "Alba\xF1ilStill_0": 5083785623461068077
+      "Alba\xF1ilWalk_0": 953358181811349348
+      "Alba\xF1ilWalk_1": 3284424263118269555
+      "Alba\xF1ilWalk_2": 1827207695885236177
+      "Alba\xF1ilWalk_3": -3615805732291094014
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

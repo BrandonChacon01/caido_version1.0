@@ -9,17 +9,23 @@ public class PlayerController : CharacterStats
     public float JumpForce;
     public float Rate;
 
-    // --- Variables de Daño por Contacto ---
+    // --- Variables de Daño y Empuje por Contacto ---
     [SerializeField] private float damageOnContact = 1f;
 
-    // --- NUEVO: Sistema de Munición ---
     [Header("Sistema de Munición")]
-    public Slider ammoBar;          // --- NUEVO --- (Arrastra tu "heatBar" aquí)
-    public int maxAmmo = 3;         // --- NUEVO ---
-    public float reloadTime = 1.5f;   // --- NUEVO --- (Tiempo que tarda en recargar)
+    public Slider ammoBar;
+    public int maxAmmo = 3;
+    public float reloadTime = 1.5f;
 
-    private int currentAmmo;          // --- NUEVO ---
-    private bool isReloading = false; // --- NUEVO ---
+    private int currentAmmo;
+    private bool isReloading = false;
+
+    [Header("Ataque Melee")]
+    [SerializeField] private Transform attackPoint; 
+    [SerializeField] private float attackRadius = 0.5f; 
+    [SerializeField] private float meleeAttackDamage = 2f; 
+    [SerializeField] private float meleeAttackRate = 1f; 
+    private float lastMeleeAttack;
 
     // --- Referencias a Componentes (Específicas del Jugador) ---
     public HealthBarUI healthBar;
@@ -58,12 +64,11 @@ public class PlayerController : CharacterStats
             healthBar.UpdateHealthBar(currentHealth, maxHealth);
         }
 
-        // --- LÓGICA DE MUNICIÓN (MODIFICADA) ---
-        currentAmmo = maxAmmo; 
+        currentAmmo = maxAmmo;
         if (ammoBar != null)
         {
             ammoBar.maxValue = maxAmmo;
-            ammoBar.value = currentAmmo; 
+            ammoBar.value = currentAmmo;
         }
     }
 
@@ -87,15 +92,21 @@ public class PlayerController : CharacterStats
             Jump();
         }
 
-        // Si el jugador INTENTA disparar
-        if (Input.GetKey(KeyCode.Space)) 
+        if (Input.GetKey(KeyCode.Space))
         {
-            // Y no estamos recargando, y tenemos munición, y ha pasado el tiempo de cadencia
-            if (!isReloading && currentAmmo > 0 && Time.time > LastShoot + Rate) // --- MODIFICADO ---
+            if (!isReloading && currentAmmo > 0 && Time.time > LastShoot + Rate)
             {
                 Shoot();
                 LastShoot = Time.time;
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && Time.time > lastMeleeAttack + meleeAttackRate)
+        {
+            lastMeleeAttack = Time.time;
+            MeleeAttack();
+            // (Opcional) Activar animación de patada
+            // anim.SetTrigger("Kick"); 
         }
 
         HandleMelting();
@@ -123,11 +134,63 @@ public class PlayerController : CharacterStats
         bullet.GetComponent<BulletScript>().SetDirection(direction);
 
         currentAmmo--;
-        UpdateAmmoBar(); 
+        UpdateAmmoBar();
 
         if (currentAmmo <= 0)
         {
             StartCoroutine(Reload());
+        }
+    }
+
+    private void MeleeAttack()
+    {
+        // 1. Detecta todos los colliders en un círculo
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius);
+
+        // 2. Recorre todos los colliders golpeados
+        foreach (Collider2D enemyCollider in hitEnemies)
+        {
+            // 3. Comprueba si es un Cholito
+            CholitoAI cholito = enemyCollider.GetComponent<CholitoAI>();
+            if (cholito != null)
+            {
+                cholito.Hit(meleeAttackDamage);
+                continue; // Pasa al siguiente objeto
+            }
+
+            // 4. Comprueba si es un Perro
+            PerroAI perro = enemyCollider.GetComponent<PerroAI>();
+            if (perro != null)
+            {
+                perro.Hit(meleeAttackDamage);
+                continue;
+            }
+
+            // 5. Comprueba si es un Albañil
+            AlbanilAI albanil = enemyCollider.GetComponent<AlbanilAI>();
+            if (albanil != null)
+            {
+                albanil.Hit(meleeAttackDamage);
+                continue;
+            }
+
+            // 6. Comprueba si es un Vecino
+            VecinoAI vecino = enemyCollider.GetComponent<VecinoAI>();
+            if (vecino != null)
+            {
+                vecino.Hit(meleeAttackDamage);
+                continue;
+            }
+
+            // 7. Comprueba si es un Taquero
+            TaqueroAI taquero = enemyCollider.GetComponent<TaqueroAI>();
+            if (taquero != null)
+            {
+                taquero.Hit(meleeAttackDamage);
+                continue;
+            }
+
+            // (Añade aquí más 'if' para futuros enemigos)
         }
     }
 
@@ -143,6 +206,7 @@ public class PlayerController : CharacterStats
         isReloading = false;
         Debug.Log("¡Recarga completa!");
     }
+
     private void UpdateAmmoBar()
     {
         if (ammoBar != null)
@@ -150,7 +214,6 @@ public class PlayerController : CharacterStats
             ammoBar.value = currentAmmo;
         }
     }
-
 
     public void Hit(float damage)
     {
@@ -161,7 +224,6 @@ public class PlayerController : CharacterStats
             healthBar.UpdateHealthBar(currentHealth, maxHealth);
         }
     }
-
 
     protected override void Die()
     {
@@ -218,7 +280,6 @@ public class PlayerController : CharacterStats
             {
                 Debug.Log("Choque lateral con enemigo.");
                 Hit(damageOnContact);
-
             }
         }
     }
@@ -242,5 +303,16 @@ public class PlayerController : CharacterStats
         float healthPercent = currentHealth / maxHealth;
         float targetScale = Mathf.Lerp(minMeltScale, 1.0f, healthPercent);
         transform.localScale = new Vector3(targetScale * facingDirection, 1.0f, 1.0f);
+    }
+
+    // --- NUEVO MÉTODO ---
+    // Dibuja el radio de ataque melee en el editor
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
 }

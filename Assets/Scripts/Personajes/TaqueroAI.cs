@@ -3,27 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VecinoAI : CharacterStats
+public class TaqueroAI : CharacterStats
 {
     [Header("Referencias")]
-    public Transform player;
-    [SerializeField] private GameObject vecinoPrefab;
+    [SerializeField] private Transform player;
+    [SerializeField] private GameObject tacoPrefab;
+    [SerializeField] private Transform firePoint;
 
     [Header("IA - Configuración")]
-    [SerializeField] private float detectionRadius = 8f;
-    [SerializeField] private float contactDamage = 2f;
-    [SerializeField] private float attackWaitTime = 1.5f;
+    [SerializeField] private float attackDistance = 6f;
+    [SerializeField] private float attackRate = 2f;
+    [SerializeField] private float contactDamage = 1f; 
     [SerializeField] private float baseScale = 1.0f;
 
     [Header("Detección de Entorno (Ledge Check)")]
     [SerializeField] private Transform ledgeCheck;
-    [SerializeField] private float checkDistance = 0.1f;
+    [SerializeField] private float checkDistance = 1.0f;
     [SerializeField] private LayerMask groundLayer;
 
     [Header("UI")]
     [SerializeField] private Slider healthSlider;
 
-    private bool isAttacking = false;
+    // Variables de estado internas
+    private bool isAttacking = false; 
     private float currentMoveDirection = 0f;
 
     protected override void Awake()
@@ -43,7 +45,7 @@ public class VecinoAI : CharacterStats
             }
             catch
             {
-                Debug.LogError("VecinoAI: No se encontró al jugador.");
+                Debug.LogError("TaqueroAI: No se encontró al jugador.");
             }
         }
 
@@ -53,10 +55,14 @@ public class VecinoAI : CharacterStats
             healthSlider.value = currentHealth;
         }
     }
+
+
+    // Decide qué hacer (moverse o disparar)
     void Update()
     {
         if (player == null) return;
 
+        // Si está en el cooldown del ataque de DISPARO, no hace nada
         if (isAttacking)
         {
             currentMoveDirection = 0f;
@@ -64,36 +70,40 @@ public class VecinoAI : CharacterStats
             return;
         }
 
-        float distance = Vector2.Distance(transform.position, player.position);
+        float distance = Mathf.Abs(player.position.x - transform.position.x);
         Vector3 directionToPlayer = player.position - transform.position;
 
-        if (distance <= detectionRadius)
+        if (distance > attackDistance)
         {
             currentMoveDirection = Mathf.Sign(directionToPlayer.x);
             if (anim != null) anim.SetBool("isMoving", true);
-
-            if (directionToPlayer.x > 0.0f)
-            {
-                transform.localScale = new Vector3(baseScale, baseScale, 1);
-            }
-            else
-            {
-                transform.localScale = new Vector3(-baseScale, baseScale, 1);
-            }
         }
         else
         {
             currentMoveDirection = 0f;
             if (anim != null) anim.SetBool("isMoving", false);
+            StartCoroutine(RangedAttack()); // Llama a la corrutina de disparo
+        }
+
+        // Voltea el sprite para mirar al jugador
+        if (directionToPlayer.x > 0.0f)
+        {
+            transform.localScale = new Vector3(baseScale, baseScale, 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(-baseScale, baseScale, 1);
         }
     }
+
+    // Aplica el movimiento y revisa las cornisas
     void FixedUpdate()
     {
         float actualMoveDirection = currentMoveDirection;
 
         if (actualMoveDirection != 0f)
         {
-            bool isGroundedAhead = Physics2D.OverlapCircle(ledgeCheck.position, checkDistance, groundLayer);
+            bool isGroundedAhead = Physics2D.Raycast(ledgeCheck.position, Vector2.down, checkDistance, groundLayer);
 
             if (!isGroundedAhead)
             {
@@ -103,6 +113,26 @@ public class VecinoAI : CharacterStats
         }
 
         rb.linearVelocity = new Vector2(actualMoveDirection * moveSpeed, rb.linearVelocity.y);
+    }
+
+    // Corrutina que spawnea el taco y espera
+    private IEnumerator RangedAttack()
+    {
+        isAttacking = true; // Previene que se mueva y dispare más
+
+        if (tacoPrefab != null && firePoint != null)
+        {
+            GameObject taco = Instantiate(tacoPrefab, firePoint.position, Quaternion.identity);
+            Vector2 direction = new Vector2(transform.localScale.x, 0).normalized;
+            BulletScript tacoScript = taco.GetComponent<BulletScript>();
+            if (tacoScript != null)
+            {
+                tacoScript.SetDirection(direction);
+            }
+        }
+
+        yield return new WaitForSeconds(attackRate); // Espera el cooldown del DISPARO
+        isAttacking = false;
     }
 
     // Método para recibir daño de las balas del jugador
@@ -116,56 +146,30 @@ public class VecinoAI : CharacterStats
         }
     }
 
-    // Método para hacer daño por contacto
+    // Método para hacer daño POR CONTACTO
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player") && !isAttacking)
+        if (collision.gameObject.CompareTag("Player"))
         {
             PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
             if (playerScript != null)
             {
-                StartCoroutine(AttackPause(playerScript));
+                playerScript.Hit(contactDamage);
             }
         }
-    }
-
-    // Corrutina que aplica el daño, spawnea y espera
-    private IEnumerator AttackPause(PlayerController playerScript)
-    {
-        isAttacking = true;
-        playerScript.Hit(contactDamage);
-
-        if (vecinoPrefab != null)
-        {
-            Vector3 spawnPosition = transform.position + new Vector3(Random.Range(-0.5f, 0.5f), 0.0f, 0);
-
-            GameObject newVecinoObj = Instantiate(vecinoPrefab, spawnPosition, Quaternion.identity);
-
-            VecinoAI newVecinoAI = newVecinoObj.GetComponent<VecinoAI>();
-            CharacterStats newVecinoStats = newVecinoObj.GetComponent<CharacterStats>();
-
-            if (newVecinoAI != null && newVecinoStats != null)
-            {
-                newVecinoAI.player = this.player;
-                newVecinoStats.moveSpeed = this.moveSpeed * 0.80f;
-                newVecinoAI.vecinoPrefab = null;
-            }
-        }
-
-        yield return new WaitForSeconds(attackWaitTime);
-        isAttacking = false;
     }
 
     // Dibuja los detectores en el editor
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(transform.position + new Vector3(attackDistance, -1, 0), transform.position + new Vector3(attackDistance, 1, 0));
+        Gizmos.DrawLine(transform.position + new Vector3(-attackDistance, -1, 0), transform.position + new Vector3(-attackDistance, 1, 0));
 
         if (ledgeCheck != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(ledgeCheck.position, checkDistance);
+            Gizmos.DrawLine(ledgeCheck.position, ledgeCheck.position + (Vector3.down * checkDistance));
         }
     }
 }

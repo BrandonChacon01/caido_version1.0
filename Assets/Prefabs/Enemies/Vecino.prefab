@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8476779767968671030}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ledgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 2696002668793579823}
   - component: {fileID: 1649168696479870036}
   - component: {fileID: 7817972410186761197}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealthCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 1332997750441157547}
   - component: {fileID: 4907314349960159293}
   - component: {fileID: 7859663983836230973}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Vecino
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -359,7 +359,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 310699749840459237}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -396,7 +396,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6156878838621184518}
   - component: {fileID: 4174852050976291813}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -486,7 +486,7 @@ GameObject:
   - component: {fileID: 4255539388283299903}
   - component: {fileID: 2239357009730186644}
   - component: {fileID: 4380753199408236197}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +561,7 @@ GameObject:
   - component: {fileID: 2380614544040115207}
   - component: {fileID: 2020725906433668718}
   - component: {fileID: 2139059426473386753}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

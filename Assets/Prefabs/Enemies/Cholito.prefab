@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 963483038560990592}
   - component: {fileID: 8748586467972965886}
   - component: {fileID: 2062886906837288983}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 6262329494517607428}
   - component: {fileID: 1160659622450718093}
   - component: {fileID: 7005133625798899588}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 2436356786504899254}
   - component: {fileID: 6750873015292495277}
   - component: {fileID: 4339278914320884533}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealthCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4586534129571527558}
   - component: {fileID: 3519098103506502544}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -350,7 +350,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3015247255535414807}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ledgeCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -386,7 +386,7 @@ GameObject:
   - component: {fileID: 2847936117717038626}
   - component: {fileID: 7081266608572967276}
   - component: {fileID: 6644074857590717165}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cholito
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -588,7 +588,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 768552896144475259}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Fill Area
   m_TagString: Untagged
   m_Icon: {fileID: 0}

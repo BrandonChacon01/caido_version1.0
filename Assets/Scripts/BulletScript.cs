@@ -86,6 +86,22 @@ public class BulletScript : MonoBehaviour
             return;
         }
 
+        AlbanilAI albanil = other.GetComponent<AlbanilAI>();
+        if (albanil != null)
+        {
+            albanil.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
+        TaqueroAI taquero = other.GetComponent<TaqueroAI>();
+        if (taquero != null)
+        {
+            taquero.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
         if (!other.isTrigger) { DestroyBullet(); }
     }
 }

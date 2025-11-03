@@ -29,8 +29,6 @@ public class CharacterStats : MonoBehaviour
     public virtual void TakeDamage(float damage)
     {
         currentHealth -= damage;
-        Debug.Log(gameObject.name + " recibió " + damage + " de daño. Vida restante: " + currentHealth);
-
         if (currentHealth <= 0)
         {
             currentHealth = 0;

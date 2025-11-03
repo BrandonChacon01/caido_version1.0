@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PerroAI : CharacterStats
 {
     [Header("Referencias")]
-    [SerializeField] public Transform player;
+    public Transform player;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
 
