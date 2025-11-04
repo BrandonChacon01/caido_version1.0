@@ -7,8 +7,8 @@ public class BulletScript : MonoBehaviour
     public AudioClip Sound;
 
     private Rigidbody2D rb2d;
-    private SpriteRenderer spriteRenderer; 
-    private Vector2 direction; 
+    private SpriteRenderer spriteRenderer;
+    private Vector2 direction;
 
     private void Awake()
     {
@@ -18,7 +18,6 @@ public class BulletScript : MonoBehaviour
 
     private void Start()
     {
-        // Reproducir el sonido al inicio
         if (Sound != null && Camera.main != null)
         {
             AudioSource audioSource = Camera.main.GetComponent<AudioSource>();
@@ -31,17 +30,13 @@ public class BulletScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Mueve la bala usando la velocidad del Rigidbody2D
         rb2d.linearVelocity = direction * Speed;
     }
 
-    // El m�todo que establece la direcci�n y voltea el sprite
     public void SetDirection(Vector2 newDirection)
     {
-        direction = newDirection.normalized; // Normalizamos para asegurar una velocidad constante
+        direction = newDirection.normalized;
 
-        // --- L�GICA PARA VOLTEAR EL SPRITE ---
-        // Si la direcci�n en X es negativa (se mueve a la izquierda)
         if (direction.x < 0)
         {
             spriteRenderer.flipX = true;
@@ -59,22 +54,54 @@ public class BulletScript : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Intentamos obtener los componentes del objeto con el que colisionamos
-        GruntScript grunt = other.GetComponent<GruntScript>();
-        if (grunt != null)
+        CholitoAI cholito = other.GetComponent<CholitoAI>();
+        if (cholito != null)
         {
-            grunt.Hit(Damage);
-            DestroyBullet(); 
-            return; 
-        }
-
-        PlayerMovement Player = other.GetComponent<PlayerMovement>();
-        if (Player != null)
-        {
-            Player.Hit(Damage);
+            cholito.Hit(Damage);
             DestroyBullet();
             return;
         }
+
+        PlayerController player = other.GetComponent<PlayerController>();
+        if (player != null)
+        {
+            player.Hit(Damage); 
+            DestroyBullet();
+            return;
+        }
+
+        PerroAI perro = other.GetComponent<PerroAI>();
+        if (perro != null)
+        {
+            perro.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
+        VecinoAI vecino = other.GetComponent<VecinoAI>();
+        if (vecino != null)
+        {
+            vecino.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
+        AlbanilAI albanil = other.GetComponent<AlbanilAI>();
+        if (albanil != null)
+        {
+            albanil.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
+        TaqueroAI taquero = other.GetComponent<TaqueroAI>();
+        if (taquero != null)
+        {
+            taquero.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
         if (!other.isTrigger) { DestroyBullet(); }
     }
 }

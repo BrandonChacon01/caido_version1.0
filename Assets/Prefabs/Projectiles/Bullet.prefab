@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9141338218809068279}
   - component: {fileID: 9141338218809068280}
   - component: {fileID: 9141338218809068281}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,8 +128,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e209f4bd7528534bb45b9601d55ce8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 2
-  Damage: 1
+  Speed: 1
+  Damage: 2
   Sound: {fileID: 0}
 --- !u!58 &9141338218809068280
 CircleCollider2D:

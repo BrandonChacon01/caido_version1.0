@@ -385,9 +385,9 @@ GameObject:
   - component: {fileID: 4962742561464441982}
   - component: {fileID: 2847936117717038626}
   - component: {fileID: 7081266608572967276}
-  - component: {fileID: 6046240037932811646}
+  - component: {fileID: 6644074857590717165}
   m_Layer: 0
-  m_Name: grunt
+  m_Name: Cholito
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -478,7 +478,7 @@ Animator:
   m_GameObject: {fileID: 9019726392077895016}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 85bab95a7c492ed42b48d0342bc3ad5b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -554,7 +554,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &6046240037932811646
+--- !u!114 &6644074857590717165
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -563,16 +563,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 9019726392077895016}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 636b4faad3e55da4abb9416f4bc26abb, type: 3}
+  m_Script: {fileID: 11500000, guid: 88e57bf95f2d44c499989ed0f0773807, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::CholitoAI
+  maxHealth: 3
+  moveSpeed: 1
   Player: {fileID: 0}
   BulletPrefab: {fileID: 9141338218809068285, guid: 25e8272bdec09f94e877850708a6b54f, type: 3}
-  Health: 2
   Rate: 1
+  Recoil: 2
   healthSlider: {fileID: 3519098103506502544}
-  moveSpeed: 0.7
-  stoppingDistance: 0.6
+  stoppingDistance: 1
   ledgeCheck: {fileID: 3015247255535414807}
   checkDistance: 0.2
   groundLayer:

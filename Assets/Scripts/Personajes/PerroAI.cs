@@ -1,37 +1,42 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class PerroAI : MonoBehaviour
+public class PerroAI : CharacterStats
 {
     [Header("Referencias")]
-    [SerializeField] private Transform player; 
-    [SerializeField] private LayerMask groundLayer; 
+    public Transform player;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform groundCheck;
-    private Rigidbody2D rb;
-    private Animator anim;
 
-    [Header("IA - Movimiento")]
-    [SerializeField] private float moveSpeed = 3f;
-    [SerializeField] private float stoppingDistance = 0.5f; 
+    [Header("IA - Configuración")]
+    [SerializeField] private float detectionRadius = 10f;
+    [SerializeField] private float contactDamage = 1f;
+    [SerializeField] private float attackWaitTime = 3f;
+    [SerializeField] private float baseScale = 0.15f;
 
     [Header("IA - Salto")]
-    [SerializeField] private float jumpForce = 7f;
-    [SerializeField] private float jumpInterval = 3f; 
-    [SerializeField] private float checkRadius = 0.2f; 
+    [SerializeField] private float jumpForce = 2f;
+    [SerializeField] private float jumpInterval = 1.5f;
+    [SerializeField] private float checkRadius = 0.2f;
     private float jumpTimer;
     private bool isGrounded;
 
-    [Header("IA - Combate")]
-    [SerializeField] private float contactDamage = 2f; 
-    [SerializeField] private float knockbackForce = 8f; 
+    [Header("UI")]
+    [SerializeField] private Slider healthSlider;
 
+    private bool isAttacking = false;
     private float currentMoveDirection = 0f;
-
-    void Start()
+    protected override void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
+        base.Awake();
+    }
 
-        // Intenta encontrar al jugador autom�ticamente si no est� asignado
+    protected override void Start()
+    {
+        base.Start();
+
         if (player == null)
         {
             try
@@ -40,97 +45,125 @@ public class PerroAI : MonoBehaviour
             }
             catch
             {
-                Debug.LogError("�El Perro AI no pudo encontrar al Jugador! Aseg�rate de que el jugador tenga el Tag 'Player'.");
+                Debug.LogError("PerroAI: No se encontró al jugador. Asegúrate de que el jugador tenga el Tag 'Player'.");
             }
         }
-        jumpTimer = jumpInterval; // Inicia el temporizador de salto
+
+        if (healthSlider != null)
+        {
+            healthSlider.maxValue = maxHealth;
+            healthSlider.value = currentHealth;
+        }
+
+        jumpTimer = jumpInterval;
     }
 
     void Update()
     {
-        if (player == null) return; // Si no hay jugador, no hace nada
+        if (player == null) return;
 
-        // --- 1. Detectar Suelo ---
+        if (isAttacking)
+        {
+            currentMoveDirection = 0f;
+            anim.SetBool("isMoving", false);
+            return;
+        }
+
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-        anim.SetBool("isGrounded", isGrounded); // Env�a info al Animator
+        if (anim != null) anim.SetBool("isGrounded", isGrounded);
 
-        // --- 2. Decidir Direcci�n y Volteo ---
+        float distance = Vector2.Distance(transform.position, player.position);
         Vector3 directionToPlayer = player.position - transform.position;
 
-        if (directionToPlayer.x > 0.0f) // Jugador a la derecha
+        if (distance <= detectionRadius)
         {
-            transform.localScale = new Vector3(1, 1, 1);
-            currentMoveDirection = 1;
+            currentMoveDirection = Mathf.Sign(directionToPlayer.x);
+            anim.SetBool("isMoving", true);
+
+            jumpTimer -= Time.deltaTime;
+            if (jumpTimer <= 0 && isGrounded)
+            {
+                Jump();
+                jumpTimer = jumpInterval;
+            }
+
+            if (directionToPlayer.x > 0.0f)
+            {
+                transform.localScale = new Vector3(baseScale, baseScale, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector3(-baseScale, baseScale, 1);
+            }
         }
-        else // Jugador a la izquierda
+        else
         {
-            transform.localScale = new Vector3(-1, 1, 1);
-            currentMoveDirection = -1;
-        }
-
-        // --- 3. Decidir Movimiento ---
-        float distance = Mathf.Abs(directionToPlayer.x);
-
-        if (distance < stoppingDistance)
-        {
-            // Si est� muy cerca, se detiene
-            currentMoveDirection = 0;
-        }
-
-        anim.SetBool("isMoving", currentMoveDirection != 0); // Env�a info al Animator
-
-        // --- 4. L�gica de Salto ---
-        jumpTimer -= Time.deltaTime;
-        if (jumpTimer <= 0 && isGrounded)
-        {
-            Jump();
-            jumpTimer = jumpInterval; // Reinicia el temporizador
+            currentMoveDirection = 0f;
+            anim.SetBool("isMoving", false);
         }
     }
 
     void FixedUpdate()
     {
-        // Aplica el movimiento en FixedUpdate
         rb.linearVelocity = new Vector2(currentMoveDirection * moveSpeed, rb.linearVelocity.y);
     }
 
+    // Aplica la fuerza de salto y activa la animación
     private void Jump()
     {
-        // Aplica la fuerza de salto
-        rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        if (anim != null) anim.SetTrigger("Jump");
+
+        float horizontalDirection = Mathf.Sign(player.position.x - transform.position.x);
+        Vector2 jumpDirection = new Vector2(horizontalDirection, 1.5f).normalized;
+        rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
     }
 
-    // --- 5. L�gica de Da�o por Contacto ---
+    // Método para recibir daño de las balas del jugador
+    public void Hit(float damage)
+    {
+        base.TakeDamage(damage);
+
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth;
+        }
+    }
+
+    // Método para hacer daño por contacto
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Si choca con el jugador
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") && !isAttacking)
         {
-            PlayerMovement playerScript = collision.gameObject.GetComponent<PlayerMovement>();
+            PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
             if (playerScript != null)
             {
-                // 1. Aplica el da�o
-                playerScript.Hit(contactDamage);
-
-                // 2. Aplica empuje (knockback) AL JUGADOR
-                Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
-                if (playerRb != null)
-                {
-                    // Calcula la direcci�n lejos del perro
-                    Vector2 knockbackDirection = (player.position - transform.position).normalized;
-                    // Damos un peque�o empuj�n hacia arriba tambi�n
-                    knockbackDirection.y = 0.5f;
-                    playerRb.AddForce(knockbackDirection.normalized * knockbackForce, ForceMode2D.Impulse);
-                }
+                StartCoroutine(AttackPause(playerScript));
             }
         }
     }
 
-    // (Opcional) Dibuja el detector de suelo en el editor
+    // Corrutina que aplica el daño y la espera
+    private IEnumerator AttackPause(PlayerController playerScript)
+    {
+        isAttacking = true;
+
+        playerScript.Hit(contactDamage);
+
+        yield return new WaitForSeconds(attackWaitTime);
+
+        isAttacking = false;
+    }
+
+    // Dibuja los detectores en el editor
     private void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(groundCheck.position, checkRadius);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(groundCheck.position, checkRadius);
+        }
     }
 }
