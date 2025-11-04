@@ -54,12 +54,12 @@ public class ObstacleSpike : MonoBehaviour
     /// </summary>
     private void DamagePlayer(GameObject player)
     {
-        // Buscar el script PlayerMovement
-        PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
-        if (playerMovement != null)
+        // Buscar el script PlayerController (actualizado)
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        if (playerController != null)
         {
             // Llamar al método Hit del jugador
-            playerMovement.Hit(Damage);
+            playerController.Hit(Damage);
             UnityEngine.Debug.Log($"[ObstacleSpike] Jugador recibió {Damage} de daño");
 
             // Reproducir sonido
@@ -67,7 +67,7 @@ public class ObstacleSpike : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.LogWarning("[ObstacleSpike] PlayerMovement no encontrado en el jugador");
+            UnityEngine.Debug.LogWarning("[ObstacleSpike] PlayerController no encontrado en el jugador");
         }
     }
 
