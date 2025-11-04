@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static System.Net.Mime.MediaTypeNames;
@@ -7,7 +7,11 @@ public class MainMenu : MonoBehaviour
 {
     [Header("Scenes")]
     [SerializeField] private string gameSceneName = "SampleScene";   // Tu escena de juego
-    [SerializeField] private string loadingSceneName = "Loading";    // La escena de carga que haremos
+    [SerializeField] private string loadingSceneName = "Loading";    // La escena de carga (opcional)
+    [SerializeField] private string videoIntroSceneName = "VideoIntro"; // 🔹 NUEVA: Escena con el video
+
+    [Header("Intro Settings")]
+    [SerializeField] private bool useVideoIntro = true; // 🔹 NUEVO: Toggle para usar video o loading
 
     [Header("Panels")]
     [SerializeField] private GameObject panelMain;
@@ -45,14 +49,26 @@ public class MainMenu : MonoBehaviour
 
     private void OnPlay()
     {
-        if (string.IsNullOrEmpty(loadingSceneName))
+        // 🔹 MODIFICADO: Ahora puede cargar la escena del video
+        LoadingPayload.NextScene = gameSceneName;
+
+        if (useVideoIntro && !string.IsNullOrEmpty(videoIntroSceneName))
         {
-            SceneManager.LoadScene(gameSceneName); // fallback
+            // Cargar escena con video intro
+            Debug.Log("[MainMenu] Cargando video intro...");
+            SceneManager.LoadScene(videoIntroSceneName);
+        }
+        else if (!string.IsNullOrEmpty(loadingSceneName))
+        {
+            // Cargar escena de loading tradicional
+            Debug.Log("[MainMenu] Cargando pantalla de carga...");
+            SceneManager.LoadScene(loadingSceneName);
         }
         else
         {
-            LoadingPayload.NextScene = gameSceneName;
-            SceneManager.LoadScene(loadingSceneName);
+            // Fallback: cargar directamente el juego
+            Debug.Log("[MainMenu] Cargando juego directamente...");
+            SceneManager.LoadScene(gameSceneName);
         }
     }
 
@@ -74,7 +90,7 @@ public class MainMenu : MonoBehaviour
     }
 }
 
-// Contenedor simple para pasar el nombre de la escena a la pantalla de carga
+// Contenedor simple para pasar el nombre de la escena a la pantalla de carga o video
 public static class LoadingPayload
 {
     public static string NextScene;
