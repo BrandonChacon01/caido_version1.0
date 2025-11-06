@@ -102,6 +102,14 @@ public class BulletScript : MonoBehaviour
             return;
         }
 
+        EloteroAI elotero = other.GetComponent<EloteroAI>();
+        if (elotero != null)
+        {
+            elotero.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
         if (!other.isTrigger) { DestroyBullet(); }
     }
 }

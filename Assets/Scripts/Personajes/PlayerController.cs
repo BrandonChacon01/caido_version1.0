@@ -190,7 +190,13 @@ public class PlayerController : CharacterStats
                 continue;
             }
 
-            // (Añade aquí más 'if' para futuros enemigos)
+            // 8. Comprueba si es un Elotero
+            EloteroAI elotero = enemyCollider.GetComponent<EloteroAI>();
+            if (elotero != null)
+            {
+                elotero.Hit(meleeAttackDamage);
+                continue;
+            }
         }
     }
 

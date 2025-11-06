@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: f08c14d1376a46b409a3a0f16b52d5b5
+guid: 670ca187ba2e8fe46982dcfc97c68933
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7626050562501407574
-    second: Taquero2Still_0
+      213: 5191689705528743077
+    second: EloteroWalk_0
+  - first:
+      213: 6597337425692579251
+    second: EloteroWalk_1
+  - first:
+      213: 2363279825369354913
+    second: EloteroWalk_2
+  - first:
+      213: 2288112498986245218
+    second: EloteroWalk_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +84,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,7 +122,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Taquero2Still_0
+      name: EloteroWalk_0
       rect:
         serializedVersion: 2
         x: 3
@@ -128,8 +137,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6537011059c25d960800000000000000
-      internalID: 7626050562501407574
+      spriteID: 5a4d71ac7469c0840800000000000000
+      internalID: 5191689705528743077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EloteroWalk_1
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b5dbc93f637e8b50800000000000000
+      internalID: 6597337425692579251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EloteroWalk_2
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 0
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2dcffda7e0cc020800000000000000
+      internalID: 2363279825369354913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EloteroWalk_3
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 0
+        width: 12
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26cd434e13201cf10800000000000000
+      internalID: 2288112498986245218
       vertices: []
       indices: 
       edges: []
@@ -148,7 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Taquero2Still_0: 7626050562501407574
+      EloteroWalk_0: 5191689705528743077
+      EloteroWalk_1: 6597337425692579251
+      EloteroWalk_2: 2363279825369354913
+      EloteroWalk_3: 2288112498986245218
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
