@@ -1,0 +1,42 @@
+name: Análisis de Métricas y Monitoreo
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+  pull_request:
+    branches: [ main, develop, feature/* ]
+
+jobs:
+  analyze-and-report:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Python dependencies
+      run: |
+        pip install matplotlib numpy pandas pillow
+    
+    - name: Analyze Assets
+      run: python scripts/analyze_assets.py
+    
+    - name: Generate Charts
+      run: python scripts/generate_metrics.py
+    
+    - name: Create ZIP Report
+      run: python scripts/create_zip_report.py
+    
+    - name: Upload Metrics ZIP
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: metrics-report
+        path: metrics_report.zip
+        retention-days: 30
