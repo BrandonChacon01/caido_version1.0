@@ -2,9 +2,9 @@ name: Análisis de Métricas y Monitoreo
 
 on:
   push:
-    branches: [ main, develop, feature/* ]
+    branches: [ main, dev, feature/* ]
   pull_request:
-    branches: [ main, develop, feature/* ]
+    branches: [ main, dev, feature/* ]
 
 jobs:
   analyze-and-report:
