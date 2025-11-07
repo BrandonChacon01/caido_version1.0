@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class PlayerController : CharacterStats
 {
-    // --- Variables de Movimiento y Disparo (EspecÌficas del Jugador) ---
+    // --- Variables de Movimiento y Disparo (EspecÔøΩficas del Jugador) ---
     public float JumpForce;
     public float Rate;
 
-    // --- Variables de DaÒo y Empuje por Contacto ---
+    // --- Variables de DaÔøΩo y Empuje por Contacto ---
     [SerializeField] private float damageOnContact = 1f;
 
-    [Header("Sistema de MuniciÛn")]
+    [Header("Sistema de MuniciÔøΩn")]
     public Slider ammoBar;
     public int maxAmmo = 3;
     public float reloadTime = 1.5f;
@@ -21,13 +21,13 @@ public class PlayerController : CharacterStats
     private bool isReloading = false;
 
     [Header("Ataque Melee")]
-    [SerializeField] private Transform attackPoint; 
-    [SerializeField] private float attackRadius = 0.5f; 
-    [SerializeField] private float meleeAttackDamage = 2f; 
-    [SerializeField] private float meleeAttackRate = 1f; 
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRadius = 0.5f;
+    [SerializeField] private float meleeAttackDamage = 2f;
+    [SerializeField] private float meleeAttackRate = 1f;
     private float lastMeleeAttack;
 
-    // --- Referencias a Componentes (EspecÌficas del Jugador) ---
+    // --- Referencias a Componentes (EspecÔøΩficas del Jugador) ---
     public HealthBarUI healthBar;
     public GameObject BulletPrefab;
 
@@ -35,6 +35,8 @@ public class PlayerController : CharacterStats
     private float Horizontal;
     private bool Grounded;
     private float LastShoot;
+
+    private bool isTrapped = false; // Bandera para saber si est√° atrapado
 
     // --- Variables de Power-Up ---
     private float velocidadOriginal;
@@ -74,6 +76,13 @@ public class PlayerController : CharacterStats
 
     private void Update()
     {
+
+        if (isTrapped) 
+        {
+            rb.linearVelocity = Vector2.zero; // <-- ¬°Frenado constante!
+            return; 
+        }
+
         Horizontal = Input.GetAxisRaw("Horizontal");
 
         if (Horizontal < 0.0f) facingDirection = -1;
@@ -105,7 +114,7 @@ public class PlayerController : CharacterStats
         {
             lastMeleeAttack = Time.time;
             MeleeAttack();
-            // (Opcional) Activar animaciÛn de patada
+            // (Opcional) Activar animaciÔøΩn de patada
             // anim.SetTrigger("Kick"); 
         }
 
@@ -135,16 +144,11 @@ public class PlayerController : CharacterStats
 
         currentAmmo--;
         UpdateAmmoBar();
-
-        if (currentAmmo <= 0)
-        {
-            StartCoroutine(Reload());
-        }
     }
 
     private void MeleeAttack()
     {
-        // 1. Detecta todos los colliders en un cÌrculo
+        // 1. Detecta todos los colliders en un cÔøΩrculo
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius);
 
         // 2. Recorre todos los colliders golpeados
@@ -166,7 +170,7 @@ public class PlayerController : CharacterStats
                 continue;
             }
 
-            // 5. Comprueba si es un AlbaÒil
+            // 5. Comprueba si es un AlbaÔøΩil
             AlbanilAI albanil = enemyCollider.GetComponent<AlbanilAI>();
             if (albanil != null)
             {
@@ -210,7 +214,7 @@ public class PlayerController : CharacterStats
         currentAmmo = maxAmmo;
         UpdateAmmoBar();
         isReloading = false;
-        Debug.Log("°Recarga completa!");
+        Debug.Log("ÔøΩRecarga completa!");
     }
 
     private void UpdateAmmoBar()
@@ -264,7 +268,7 @@ public class PlayerController : CharacterStats
     {
         conPowerUpVelocidad = true;
         moveSpeed *= multiplicador;
-        Debug.Log("°Power-up de velocidad activado! Velocidad actual: " + moveSpeed);
+        Debug.Log("ÔøΩPower-up de velocidad activado! Velocidad actual: " + moveSpeed);
         yield return new WaitForSeconds(tiempo);
         moveSpeed = velocidadOriginal;
         conPowerUpVelocidad = false;
@@ -311,7 +315,7 @@ public class PlayerController : CharacterStats
         transform.localScale = new Vector3(targetScale * facingDirection, 1.0f, 1.0f);
     }
 
-    // --- NUEVO M…TODO ---
+    // --- NUEVO MÔøΩTODO ---
     // Dibuja el radio de ataque melee en el editor
     private void OnDrawGizmosSelected()
     {
@@ -321,4 +325,55 @@ public class PlayerController : CharacterStats
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
+
+    // --- NUEVO M√âTODO: Recarga manual ---
+    // Este m√©todo ser√° llamado por el objeto de munici√≥n
+    public void RechargeAmmo(int amount)
+    {
+        // Sumamos la cantidad
+        currentAmmo += amount;
+
+        // Nos aseguramos de no pasarnos del m√°ximo
+        if (currentAmmo > maxAmmo)
+        {
+            currentAmmo = maxAmmo;
+        }
+
+        // Actualizamos la barra de UI
+        UpdateAmmoBar();
+
+        Debug.Log("¬°Munici√≥n recargada! Actual: " + currentAmmo);
+    }
+    
+    // Funci√≥n p√∫blica para que las trampas la llamen
+public void Immobilize(float duration)
+{
+    // Solo activamos si no est√° ya atrapado (para evitar conflictos)
+    if (!isTrapped)
+    {
+        StartCoroutine(ImmobilizeRoutine(duration));
+    }
 }
+
+    private IEnumerator ImmobilizeRoutine(float duration)
+    {
+        isTrapped = true;
+        
+        // --- NUEVA L√çNEA CLAVE ---
+        // Esto mata cualquier movimiento que llevara al instante.
+        rb.linearVelocity = Vector2.zero; 
+        // (Nota: Si usas una versi√≥n antigua de Unity, usa 'rb.velocity' en lugar de 'rb.linearVelocity')
+
+        // Opcional: Tambi√©n reseteamos la animaci√≥n a Idle
+        anim.SetBool("running", false);
+
+        Debug.Log("¬°Jugador atrapado y detenido!");
+
+        yield return new WaitForSeconds(duration); 
+
+        isTrapped = false;
+        Debug.Log("¬°Jugador liberado!");
+    }
+
+}
+
