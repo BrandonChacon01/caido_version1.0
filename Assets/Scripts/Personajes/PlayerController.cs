@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class PlayerController : CharacterStats
 {
-    // --- Variables de Movimiento y Disparo (Espec�ficas del Jugador) ---
+    // --- Variables de Movimiento y Disparo (Espec�ficas del Jugador) ---
     public float JumpForce;
     public float Rate;
 
-    // --- Variables de Da�o y Empuje por Contacto ---
+    // --- Variables de Da�o y Empuje por Contacto ---
     [SerializeField] private float damageOnContact = 1f;
 
-    [Header("Sistema de Munici�n")]
+    [Header("Sistema de Munici�n")]
     public Slider ammoBar;
     public int maxAmmo = 3;
     public float reloadTime = 1.5f;
@@ -21,13 +21,14 @@ public class PlayerController : CharacterStats
     private bool isReloading = false;
 
     [Header("Ataque Melee")]
-    [SerializeField] private Transform attackPoint; 
-    [SerializeField] private float attackRadius = 0.5f; 
-    [SerializeField] private float meleeAttackDamage = 2f; 
-    [SerializeField] private float meleeAttackRate = 1f; 
-    private float lastMeleeAttack;
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackRadius = 0.5f;
+    [SerializeField] private float meleeAttackDamage = 2f;
+    [SerializeField] private float meleeAttackCooldown = 1f;
+    [SerializeField] private float kickAnimationDuration = 0.3f;
+    private bool isKicking = false;
 
-    // --- Referencias a Componentes (Espec�ficas del Jugador) ---
+    // --- Referencias a Componentes (Espec�ficas del Jugador) ---
     public HealthBarUI healthBar;
     public GameObject BulletPrefab;
 
@@ -35,6 +36,8 @@ public class PlayerController : CharacterStats
     private float Horizontal;
     private bool Grounded;
     private float LastShoot;
+
+    private bool isTrapped = false; // Bandera para saber si está atrapado
 
     // --- Variables de Power-Up ---
     private float velocidadOriginal;
@@ -74,13 +77,31 @@ public class PlayerController : CharacterStats
 
     private void Update()
     {
+        // --- MODIFICADO ---
+        // Si está atrapado O pateando, no procesa inputs de movimiento/disparo
+        if (isTrapped || isKicking)
+        {
+            // Si está atrapado, forza la detención horizontal
+            if (isTrapped)
+            {
+                rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
+            }
+            return; // No procesa inputs de movimiento/disparo
+        }
+
+        // --- LÓGICA DE INPUTS (Movimiento) ---
         Horizontal = Input.GetAxisRaw("Horizontal");
 
         if (Horizontal < 0.0f) facingDirection = -1;
         else if (Horizontal > 0.0f) facingDirection = 1;
 
-        anim.SetBool("running", Horizontal != 0.0f);
+        // No actualiza la anim de correr si está pateando (la corrutina lo maneja)
+        if (!isKicking)
+        {
+            anim.SetBool("running", Horizontal != 0.0f);
+        }
 
+        // --- LÓGICA DE INPUTS (Acciones) ---
         if (Physics2D.Raycast(transform.position, Vector3.down, 0.1f))
         {
             Grounded = true;
@@ -92,21 +113,21 @@ public class PlayerController : CharacterStats
             Jump();
         }
 
+        // Añadido chequeo de !isKicking
         if (Input.GetKey(KeyCode.Space))
         {
-            if (!isReloading && currentAmmo > 0 && Time.time > LastShoot + Rate)
+            if (!isReloading && !isKicking && currentAmmo > 0 && Time.time > LastShoot + Rate)
             {
                 Shoot();
                 LastShoot = Time.time;
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.F) && Time.time > lastMeleeAttack + meleeAttackRate)
+        // --- MODIFICADO ---
+        // Ahora llama a la Corrutina y solo revisa si no está recargando
+        if (Input.GetKeyDown(KeyCode.F) && !isReloading)
         {
-            lastMeleeAttack = Time.time;
-            MeleeAttack();
-            // (Opcional) Activar animaci�n de patada
-            // anim.SetTrigger("Kick"); 
+            StartCoroutine(MeleeAttackRoutine());
         }
 
         HandleMelting();
@@ -114,11 +135,19 @@ public class PlayerController : CharacterStats
 
     private void LateUpdate()
     {
+        if (isKicking) return;
         UpdateVisualMelt();
     }
 
     private void FixedUpdate()
     {
+        // Si está atrapado o pateando, detenemos la velocidad X
+        if (isTrapped || isKicking)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            return;
+        }
+
         rb.linearVelocity = new Vector2(Horizontal * moveSpeed, rb.linearVelocity.y);
     }
 
@@ -135,67 +164,24 @@ public class PlayerController : CharacterStats
 
         currentAmmo--;
         UpdateAmmoBar();
-
-        if (currentAmmo <= 0)
-        {
-            StartCoroutine(Reload());
-        }
     }
 
     private void MeleeAttack()
     {
-        // 1. Detecta todos los colliders en un c�rculo
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius);
 
-        // 2. Recorre todos los colliders golpeados
         foreach (Collider2D enemyCollider in hitEnemies)
         {
-            // 3. Comprueba si es un Cholito
-            CholitoAI cholito = enemyCollider.GetComponent<CholitoAI>();
-            if (cholito != null)
+            if (enemyCollider.CompareTag("Player"))
             {
-                cholito.Hit(meleeAttackDamage);
-                continue; // Pasa al siguiente objeto
-            }
-
-            // 4. Comprueba si es un Perro
-            PerroAI perro = enemyCollider.GetComponent<PerroAI>();
-            if (perro != null)
-            {
-                perro.Hit(meleeAttackDamage);
                 continue;
             }
-
-            // 5. Comprueba si es un Alba�il
-            AlbanilAI albanil = enemyCollider.GetComponent<AlbanilAI>();
-            if (albanil != null)
+            // Busca la clase base 'CharacterStats' para dañar a CUALQUIER enemigo
+            CharacterStats enemy = enemyCollider.GetComponent<CharacterStats>();
+            if (enemy != null)
             {
-                albanil.Hit(meleeAttackDamage);
-                continue;
-            }
-
-            // 6. Comprueba si es un Vecino
-            VecinoAI vecino = enemyCollider.GetComponent<VecinoAI>();
-            if (vecino != null)
-            {
-                vecino.Hit(meleeAttackDamage);
-                continue;
-            }
-
-            // 7. Comprueba si es un Taquero
-            TaqueroAI taquero = enemyCollider.GetComponent<TaqueroAI>();
-            if (taquero != null)
-            {
-                taquero.Hit(meleeAttackDamage);
-                continue;
-            }
-
-            // 8. Comprueba si es un Elotero
-            EloteroAI elotero = enemyCollider.GetComponent<EloteroAI>();
-            if (elotero != null)
-            {
-                elotero.Hit(meleeAttackDamage);
-                continue;
+                // Llama al método TakeDamage de la base (que ya maneja la vida y la muerte)
+                enemy.TakeDamage(meleeAttackDamage);
             }
         }
     }
@@ -210,7 +196,7 @@ public class PlayerController : CharacterStats
         currentAmmo = maxAmmo;
         UpdateAmmoBar();
         isReloading = false;
-        Debug.Log("�Recarga completa!");
+        Debug.Log("�Recarga completa!");
     }
 
     private void UpdateAmmoBar()
@@ -264,7 +250,7 @@ public class PlayerController : CharacterStats
     {
         conPowerUpVelocidad = true;
         moveSpeed *= multiplicador;
-        Debug.Log("�Power-up de velocidad activado! Velocidad actual: " + moveSpeed);
+        Debug.Log("�Power-up de velocidad activado! Velocidad actual: " + moveSpeed);
         yield return new WaitForSeconds(tiempo);
         moveSpeed = velocidadOriginal;
         conPowerUpVelocidad = false;
@@ -311,7 +297,7 @@ public class PlayerController : CharacterStats
         transform.localScale = new Vector3(targetScale * facingDirection, 1.0f, 1.0f);
     }
 
-    // --- NUEVO M�TODO ---
+    // --- NUEVO M�TODO ---
     // Dibuja el radio de ataque melee en el editor
     private void OnDrawGizmosSelected()
     {
@@ -321,4 +307,78 @@ public class PlayerController : CharacterStats
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
+
+    // --- NUEVO MÉTODO: Recarga manual ---
+    // Este método será llamado por el objeto de munición
+    public void RechargeAmmo(int amount)
+    {
+        // Sumamos la cantidad
+        currentAmmo += amount;
+
+        // Nos aseguramos de no pasarnos del máximo
+        if (currentAmmo > maxAmmo)
+        {
+            currentAmmo = maxAmmo;
+        }
+
+        // Actualizamos la barra de UI
+        UpdateAmmoBar();
+
+        Debug.Log("¡Munición recargada! Actual: " + currentAmmo);
+    }
+
+    // Función pública para que las trampas la llamen
+    public void Immobilize(float duration)
+    {
+        // Solo activamos si no está ya atrapado (para evitar conflictos)
+        if (!isTrapped)
+        {
+            StartCoroutine(ImmobilizeRoutine(duration));
+        }
+    }
+
+    private IEnumerator ImmobilizeRoutine(float duration)
+    {
+        isTrapped = true;
+
+        // --- NUEVA LÍNEA CLAVE ---
+        // Esto mata cualquier movimiento que llevara al instante.
+        rb.linearVelocity = Vector2.zero;
+        // (Nota: Si usas una versión antigua de Unity, usa 'rb.velocity' en lugar de 'rb.linearVelocity')
+
+        // Opcional: También reseteamos la animación a Idle
+        anim.SetBool("running", false);
+
+        Debug.Log("¡Jugador atrapado y detenido!");
+
+        yield return new WaitForSeconds(duration);
+
+        isTrapped = false;
+        Debug.Log("¡Jugador liberado!");
+    }
+
+    private IEnumerator MeleeAttackRoutine()
+    {
+        // 1. Inicia el estado de patada
+        isKicking = true;
+        anim.SetBool("isKicking", true); // <-- Envía el Booleano al Animator
+        anim.SetBool("running", false); // Detiene la animación de correr
+
+        // 2. Ejecuta la lógica de daño (OverlapCircle)
+        MeleeAttack(); 
+        
+        // 3. Espera a que termine la animación
+        yield return new WaitForSeconds(kickAnimationDuration); 
+
+        // 4. Termina la animación
+        anim.SetBool("isKicking", false);
+
+        // 5. Espera el resto del cooldown
+        // (Ej: 1s Cooldown - 0.3s Anim = 0.7s de espera)
+        yield return new WaitForSeconds(meleeAttackCooldown - kickAnimationDuration); 
+
+        // 6. Permite patear de nuevo
+        isKicking = false; 
+    }
 }
+
