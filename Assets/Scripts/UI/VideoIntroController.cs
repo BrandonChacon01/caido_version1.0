@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using LevelSystem; // 🔹 AGREGADO
 
 /// <summary>
 /// Controlador para reproducir un video introductorio antes de iniciar el juego
@@ -9,7 +10,7 @@ public class VideoIntroController : MonoBehaviour
 {
     [Header("Video Configuration")]
     [SerializeField] private VideoPlayer videoPlayer;
-    [SerializeField] private string nextSceneName = "SampleScene"; // Escena del juego
+    [SerializeField] private string nextSceneName = "SampleScene"; // Escena del juego (fallback)
 
     [Header("Skip Options")]
     [SerializeField] private bool allowSkip = true;
@@ -28,7 +29,7 @@ public class VideoIntroController : MonoBehaviour
 
         if (videoPlayer == null)
         {
-            Debug.LogError("[VideoIntroController] No se encontr� VideoPlayer. Cargando escena directamente...");
+            UnityEngine.Debug.LogError("[VideoIntroController] No se encontró VideoPlayer. Cargando escena directamente...");
             LoadNextScene();
             return;
         }
@@ -42,14 +43,14 @@ public class VideoIntroController : MonoBehaviour
         // Configurar eventos del VideoPlayer
         videoPlayer.loopPointReached += OnVideoFinished;
 
-        // Iniciar reproducci�n
+        // Iniciar reproducción
         videoPlayer.Play();
-        Debug.Log("[VideoIntroController] Reproduciendo video intro...");
+        UnityEngine.Debug.Log("[VideoIntroController] Reproduciendo video intro...");
     }
 
     private void Update()
     {
-        // Permitir saltar el video si est� habilitado
+        // Permitir saltar el video si está habilitado
         if (allowSkip && !isLoadingNextScene && !videoFinished)
         {
             if (Input.GetKeyDown(skipKey) || Input.GetKeyDown(escapeKey) || Input.anyKeyDown)
@@ -65,7 +66,7 @@ public class VideoIntroController : MonoBehaviour
     private void OnVideoFinished(VideoPlayer vp)
     {
         videoFinished = true;
-        Debug.Log("[VideoIntroController] Video terminado. Cargando juego...");
+        UnityEngine.Debug.Log("[VideoIntroController] Video terminado. Cargando juego...");
         LoadNextScene();
     }
 
@@ -76,7 +77,7 @@ public class VideoIntroController : MonoBehaviour
     {
         if (isLoadingNextScene) return;
 
-        Debug.Log("[VideoIntroController] Video saltado por el usuario.");
+        UnityEngine.Debug.Log("[VideoIntroController] Video saltado por el usuario.");
         if (videoPlayer != null && videoPlayer.isPlaying)
         {
             videoPlayer.Stop();
@@ -85,15 +86,26 @@ public class VideoIntroController : MonoBehaviour
     }
 
     /// <summary>
-    /// Carga la siguiente escena (el juego)
+    /// Carga la siguiente escena (el juego o el primer nivel)
     /// </summary>
     private void LoadNextScene()
     {
         if (isLoadingNextScene) return;
 
         isLoadingNextScene = true;
-        Debug.Log($"[VideoIntroController] Cargando escena: {nextSceneName}");
-        SceneManager.LoadScene(nextSceneName);
+
+        // 🔹 NUEVO: Verificar si debemos usar el sistema de niveles
+        if (LoadingPayload.UseLevelSystem && LevelManager.Instance != null)
+        {
+            UnityEngine.Debug.Log("[VideoIntroController] Iniciando sistema de niveles...");
+            LevelManager.Instance.StartGame();
+        }
+        else
+        {
+            // Fallback: cargar escena tradicional
+            UnityEngine.Debug.Log($"[VideoIntroController] Cargando escena: {nextSceneName}");
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
 
     private void OnDestroy()
