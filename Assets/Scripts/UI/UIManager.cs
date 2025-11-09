@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI runTimeText;
 
     private LevelTimer levelTimer;
+    private PauseMenuController pauseMenuController;
 
     private void Start()
     {
@@ -27,10 +28,13 @@ public class UIManager : MonoBehaviour
         {
             UnityEngine.Debug.LogWarning("[UIManager] No se encontró LevelTimer en la escena");
         }
+
+        // Buscar el PauseMenuController
+        pauseMenuController = FindFirstObjectByType<PauseMenuController>();
     }
 
     /// <summary>
-    /// Muestra el panel de Game Over y pausa el timer
+    /// Muestra el panel de Game Over y pausa el timer y el juego
     /// </summary>
     public void MostrarPanelGameOver()
     {
@@ -41,16 +45,24 @@ public class UIManager : MonoBehaviour
             if (HealthBar != null) HealthBar.SetActive(false);
             if (HeatBar != null) HeatBar.SetActive(false);
 
+            // 🔹 NUEVO: Pausar el juego completamente
+            PauseManager.Instance.Pause(PauseReason.GameOver);
+
+            // Notificar al PauseMenuController que estamos en Game Over
+            if (pauseMenuController != null)
+            {
+                pauseMenuController.SetGameOverState(true);
+            }
+
             // Pausar el timer
             if (levelTimer != null)
             {
                 levelTimer.PauseTimer();
 
-                // 🔹 MODIFICADO: Mostrar el tiempo total acumulado de la run
+                // Mostrar el tiempo total acumulado de la run
                 float currentLevelTime = levelTimer.TimeElapsed;
                 float totalRunTime = 0f;
 
-                // Obtener el tiempo total acumulado + el tiempo del nivel actual
                 if (GameStatsManager.Instance != null)
                 {
                     totalRunTime = GameStatsManager.Instance.GetTotalAccumulatedTime() + currentLevelTime;
@@ -75,6 +87,9 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void ReiniciarNivel()
     {
+        // 🔹 NUEVO: Forzar reanudación antes de recargar
+        PauseManager.Instance.ForceResume();
+
         // Reactivar elementos del HUD
         if (HealthBar != null) HealthBar.SetActive(true);
         if (HeatBar != null) HeatBar.SetActive(true);
@@ -88,7 +103,9 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void VolverAlMenuPrincipal()
     {
-        // Nota: El LevelManager y GameStatsManager se resetearán al cargar el MainMenu
+        // 🔹 NUEVO: Forzar reanudación antes de cambiar de escena
+        PauseManager.Instance.ForceResume();
+
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -103,6 +120,15 @@ public class UIManager : MonoBehaviour
 
             if (HealthBar != null) HealthBar.SetActive(true);
             if (HeatBar != null) HeatBar.SetActive(true);
+
+            // 🔹 NUEVO: Reanudar el juego
+            PauseManager.Instance.Resume();
+
+            // Notificar al PauseMenuController
+            if (pauseMenuController != null)
+            {
+                pauseMenuController.SetGameOverState(false);
+            }
 
             // Reanudar el timer
             if (levelTimer != null)
