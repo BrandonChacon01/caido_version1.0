@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using TMPro;
 using System;
 
@@ -13,8 +13,8 @@ namespace LevelSystem
         [Tooltip("Texto donde se muestra el tiempo")]
         public TextMeshProUGUI timerText;
 
-        [Header("Configuración")]
-        [Tooltip("Tiempo máximo del nivel en segundos")]
+        [Header("ConfiguraciÃ³n")]
+        [Tooltip("Tiempo mÃ¡ximo del nivel en segundos")]
         public float maxTime = 180f; // 3 minutos
 
         [Header("Colores de Advertencia")]
@@ -35,7 +35,7 @@ namespace LevelSystem
         // Evento que se dispara cuando se acaba el tiempo
         public event Action OnTimeUp;
 
-        // Propiedades públicas
+        // Propiedades pÃºblicas
         public float CurrentTime => currentTime;
         public float TimeElapsed => maxTime - currentTime;
         public bool IsRunning => isRunning;
@@ -47,7 +47,7 @@ namespace LevelSystem
             currentTime = maxTime;
             UpdateTimerDisplay();
 
-            // Iniciar automáticamente
+            // Iniciar automÃ¡ticamente
             StartTimer();
         }
 
@@ -58,7 +58,7 @@ namespace LevelSystem
                 // Decrementar el tiempo
                 currentTime -= Time.deltaTime;
 
-                // Verificar si se acabó el tiempo
+                // Verificar si se acabÃ³ el tiempo
                 if (currentTime <= 0f)
                 {
                     currentTime = 0f;
@@ -115,12 +115,12 @@ namespace LevelSystem
             // Registrar el tiempo en el GameStatsManager
             if (GameStatsManager.Instance != null)
             {
-                GameStatsManager.Instance.RegisterLevelTime(timeUsed);
+                GameStatsManager.Instance.RegisterLevelTime(timeUsed); // â¬…ï¸ AQUÃ se registra
             }
         }
 
         /// <summary>
-        /// Resetea el timer a su valor máximo
+        /// Resetea el timer a su valor mÃ¡ximo
         /// </summary>
         public void ResetTimer()
         {
@@ -139,12 +139,12 @@ namespace LevelSystem
         {
             isRunning = false;
             isCompleted = true;
-            UnityEngine.Debug.Log("[LevelTimer] ¡Tiempo agotado!");
+            UnityEngine.Debug.Log("[LevelTimer] Â¡Tiempo agotado!");
 
             // Disparar evento
             OnTimeUp?.Invoke();
 
-            // TODO: Aquí puedes agregar lógica de Game Over o reinicio de nivel
+            // TODO: AquÃ­ puedes agregar lÃ³gica de Game Over o reinicio de nivel
             // Por ejemplo: GameManager.Instance.GameOver();
         }
 
@@ -160,7 +160,7 @@ namespace LevelSystem
         }
 
         /// <summary>
-        /// Actualiza el color del timer según el tiempo restante
+        /// Actualiza el color del timer segÃºn el tiempo restante
         /// </summary>
         private void UpdateTimerColor()
         {
@@ -170,7 +170,7 @@ namespace LevelSystem
             {
                 timerText.color = criticalColor;
 
-                // Efecto de parpadeo cuando es crítico
+                // Efecto de parpadeo cuando es crÃ­tico
                 if (currentTime % 1f < 0.5f)
                 {
                     timerText.color = new Color(criticalColor.r, criticalColor.g, criticalColor.b, 0.5f);
@@ -197,17 +197,17 @@ namespace LevelSystem
         }
 
         /// <summary>
-        /// Añade tiempo extra al timer (power-up o bonus)
+        /// AÃ±ade tiempo extra al timer (power-up o bonus)
         /// </summary>
         public void AddTime(float extraTime)
         {
             currentTime += extraTime;
             if (currentTime > maxTime) currentTime = maxTime;
-            UnityEngine.Debug.Log($"[LevelTimer] +{extraTime} segundos añadidos");
+            UnityEngine.Debug.Log($"[LevelTimer] +{extraTime} segundos aÃ±adidos");
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("Debug - Añadir 30 segundos")]
+        [ContextMenu("Debug - AÃ±adir 30 segundos")]
         private void DebugAddTime()
         {
             AddTime(30f);

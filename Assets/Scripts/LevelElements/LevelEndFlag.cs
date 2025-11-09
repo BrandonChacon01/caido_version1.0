@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using LevelSystem;
 
 /// <summary>
@@ -8,29 +8,29 @@ using LevelSystem;
 [RequireComponent(typeof(Collider2D))]
 public class LevelEndFlag : MonoBehaviour
 {
-    [Header("Configuración Visual")]
+    [Header("ConfiguraciÃ³n Visual")]
     [Tooltip("CAMBIAR ESTO: Sprite de la bandera (arrastrar cuando tengas el asset)")]
     public Sprite FlagSprite;
 
     [Tooltip("Color temporal de la bandera")]
     public Color FlagColor = Color.yellow;
 
-    [Tooltip("Tamaño de la bandera")]
+    [Tooltip("TamaÃ±o de la bandera")]
     public Vector2 FlagSize = new Vector2(1f, 2f);
 
-    [Header("Configuración de Audio")]
+    [Header("ConfiguraciÃ³n de Audio")]
     [Tooltip("CAMBIAR ESTO: Sonido al completar el nivel")]
     public AudioClip CompletionSound;
 
     [Header("Efectos Visuales")]
-    [Tooltip("¿Animar la bandera? (rotación constante)")]
+    [Tooltip("Â¿Animar la bandera? (rotaciÃ³n constante)")]
     public bool AnimateFlag = true;
 
-    [Tooltip("Velocidad de rotación de la animación")]
+    [Tooltip("Velocidad de rotaciÃ³n de la animaciÃ³n")]
     public float RotationSpeed = 50f;
 
     [Header("Sistema de Niveles")]
-    [Tooltip("¿Usar el nuevo LevelManager? (desmarcar si quieres usar el GameManager antiguo)")]
+    [Tooltip("Â¿Usar el nuevo LevelManager? (desmarcar si quieres usar el GameManager antiguo)")]
     public bool useLevelManager = true;
 
     [Tooltip("Delay antes de cambiar de nivel (segundos)")]
@@ -40,6 +40,7 @@ public class LevelEndFlag : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Collider2D triggerCollider;
     private bool levelCompleted = false;
+    private LevelTimer levelTimer; // ðŸ”¹ AGREGADO
 
     private void Awake()
     {
@@ -67,11 +68,18 @@ public class LevelEndFlag : MonoBehaviour
     private void Start()
     {
         UnityEngine.Debug.Log("[LevelEndFlag] Bandera de nivel inicializada");
+
+        // Buscar el LevelTimer en la escena
+        levelTimer = FindFirstObjectByType<LevelTimer>();
+        if (levelTimer == null)
+        {
+            UnityEngine.Debug.LogWarning("[LevelEndFlag] No se encontrÃ³ LevelTimer en la escena");
+        }
     }
 
     private void Update()
     {
-        // Animación simple de rotación
+        // AnimaciÃ³n simple de rotaciÃ³n
         if (AnimateFlag && !levelCompleted)
         {
             transform.Rotate(Vector3.forward * RotationSpeed * Time.deltaTime);
@@ -143,7 +151,14 @@ public class LevelEndFlag : MonoBehaviour
     private void CompleteLevel()
     {
         levelCompleted = true;
-        UnityEngine.Debug.Log("[LevelEndFlag] ¡Nivel completado! Tocaste la bandera");
+        UnityEngine.Debug.Log("[LevelEndFlag] Â¡Nivel completado! Tocaste la bandera");
+
+        // ðŸ”¹ AGREGADO: Detener el timer
+        if (levelTimer != null)
+        {
+            levelTimer.StopTimer();
+            UnityEngine.Debug.Log($"[LevelEndFlag] Timer detenido. Tiempo usado: {levelTimer.TimeElapsed:F2} segundos");
+        }
 
         // Reproducir sonido si existe
         PlayCompletionSound();
@@ -156,11 +171,11 @@ public class LevelEndFlag : MonoBehaviour
     }
 
     /// <summary>
-    /// Notifica al sistema de gestión de niveles después del delay
+    /// Notifica al sistema de gestiÃ³n de niveles despuÃ©s del delay
     /// </summary>
     private System.Collections.IEnumerator NotifyLevelCompletion()
     {
-        // Esperar el delay de transición
+        // Esperar el delay de transiciÃ³n
         yield return new WaitForSeconds(transitionDelay);
 
         if (useLevelManager)
@@ -173,7 +188,7 @@ public class LevelEndFlag : MonoBehaviour
             }
             else
             {
-                UnityEngine.Debug.LogError("[LevelEndFlag] No se encontró LevelManager. Asegúrate de que existe en la escena.");
+                UnityEngine.Debug.LogError("[LevelEndFlag] No se encontrÃ³ LevelManager. AsegÃºrate de que existe en la escena.");
             }
         }
         else
@@ -186,7 +201,7 @@ public class LevelEndFlag : MonoBehaviour
             }
             else
             {
-                UnityEngine.Debug.LogError("[LevelEndFlag] No se encontró GameManager en la escena");
+                UnityEngine.Debug.LogError("[LevelEndFlag] No se encontrÃ³ GameManager en la escena");
             }
         }
     }
@@ -205,7 +220,7 @@ public class LevelEndFlag : MonoBehaviour
             }
             else
             {
-                UnityEngine.Debug.LogWarning("[LevelEndFlag] No hay AudioSource en la cámara principal");
+                UnityEngine.Debug.LogWarning("[LevelEndFlag] No hay AudioSource en la cÃ¡mara principal");
             }
         }
     }
@@ -223,7 +238,7 @@ public class LevelEndFlag : MonoBehaviour
         }
         spriteRenderer.enabled = true;
 
-        // Efecto de escala (hacer la bandera más grande)
+        // Efecto de escala (hacer la bandera mÃ¡s grande)
         Vector3 originalScale = transform.localScale;
         float duration = 0.5f;
         float elapsed = 0f;
@@ -238,14 +253,14 @@ public class LevelEndFlag : MonoBehaviour
     }
 
     /// <summary>
-    /// Dibuja gizmos en el editor para visualizar la posición de la bandera
+    /// Dibuja gizmos en el editor para visualizar la posiciÃ³n de la bandera
     /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(transform.position + Vector3.up * (FlagSize.y / 2), FlagSize);
 
-        // Dibujar una línea hacia arriba para indicar que es la bandera
+        // Dibujar una lÃ­nea hacia arriba para indicar que es la bandera
         Gizmos.DrawLine(transform.position, transform.position + Vector3.up * FlagSize.y);
     }
 
