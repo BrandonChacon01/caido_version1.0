@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
 
     [Header("Intro Settings")]
     [SerializeField] private bool useVideoIntro = true; // Toggle para usar video o ir directo
-    [SerializeField] private bool useLevelSystem = true; // 🔹 NUEVO: Usar el sistema de niveles
+    [SerializeField] private bool useLevelSystem = true; // Usar el sistema de niveles
 
     [Header("Panels")]
     [SerializeField] private GameObject panelMain;
@@ -43,6 +43,13 @@ public class MainMenu : MonoBehaviour
             LevelManager.Instance.ResetProgress();
             UnityEngine.Debug.Log("[MainMenu] Progreso del LevelManager reseteado");
         }
+
+        // 🔹 AGREGADO: Resetear estadísticas al volver al menú
+        if (GameStatsManager.Instance != null)
+        {
+            GameStatsManager.Instance.ResetStats();
+            UnityEngine.Debug.Log("[MainMenu] Estadísticas reseteadas");
+        }
     }
 
     private void ShowMain()
@@ -61,7 +68,15 @@ public class MainMenu : MonoBehaviour
 
     private void OnPlay()
     {
-        // 🔹 NUEVO: Configurar el sistema de niveles
+        // 🔹 AGREGADO: Iniciar tracking de estadísticas
+        if (GameStatsManager.Instance != null)
+        {
+            GameStatsManager.Instance.ResetStats();
+            GameStatsManager.Instance.StartTracking();
+            UnityEngine.Debug.Log("[MainMenu] Tracking de estadísticas iniciado");
+        }
+
+        // Configurar el sistema de niveles
         if (useLevelSystem && LevelManager.Instance != null)
         {
             // Marcar que queremos usar el sistema de niveles
@@ -83,7 +98,7 @@ public class MainMenu : MonoBehaviour
             return;
         }
 
-        // 🔹 Código original como fallback (sin sistema de niveles)
+        // Código original como fallback (sin sistema de niveles)
         LoadingPayload.UseLevelSystem = false;
         LoadingPayload.NextScene = gameSceneName;
 
@@ -126,5 +141,5 @@ public class MainMenu : MonoBehaviour
 public static class LoadingPayload
 {
     public static string NextScene;
-    public static bool UseLevelSystem; // 🔹 NUEVO
+    public static bool UseLevelSystem;
 }
