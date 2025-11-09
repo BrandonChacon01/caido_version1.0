@@ -1,8 +1,9 @@
 using UnityEngine;
+using LevelSystem;
 
 /// <summary>
 /// LevelEndFlag - Script para el objeto que finaliza el nivel
-/// Detecta cuando el jugador lo toca y notifica al GameManager
+/// Detecta cuando el jugador lo toca y notifica al LevelManager
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 public class LevelEndFlag : MonoBehaviour
@@ -27,6 +28,14 @@ public class LevelEndFlag : MonoBehaviour
 
     [Tooltip("Velocidad de rotación de la animación")]
     public float RotationSpeed = 50f;
+
+    [Header("Sistema de Niveles")]
+    [Tooltip("¿Usar el nuevo LevelManager? (desmarcar si quieres usar el GameManager antiguo)")]
+    public bool useLevelManager = true;
+
+    [Tooltip("Delay antes de cambiar de nivel (segundos)")]
+    [Range(0f, 3f)]
+    public float transitionDelay = 1f;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D triggerCollider;
@@ -142,14 +151,43 @@ public class LevelEndFlag : MonoBehaviour
         // Efecto visual de completado
         StartCoroutine(CompletionEffect());
 
-        // Notificar al GameManager
-        if (GameManager.Instance != null)
+        // Notificar al sistema de niveles apropiado
+        StartCoroutine(NotifyLevelCompletion());
+    }
+
+    /// <summary>
+    /// Notifica al sistema de gestión de niveles después del delay
+    /// </summary>
+    private System.Collections.IEnumerator NotifyLevelCompletion()
+    {
+        // Esperar el delay de transición
+        yield return new WaitForSeconds(transitionDelay);
+
+        if (useLevelManager)
         {
-            GameManager.Instance.CompleteLevel();
+            // Usar el nuevo LevelManager
+            if (LevelManager.Instance != null)
+            {
+                UnityEngine.Debug.Log("[LevelEndFlag] Notificando a LevelManager...");
+                LevelManager.Instance.CompleteCurrentLevel();
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("[LevelEndFlag] No se encontró LevelManager. Asegúrate de que existe en la escena.");
+            }
         }
         else
         {
-            UnityEngine.Debug.LogError("[LevelEndFlag] No se encontró GameManager en la escena");
+            // Usar el GameManager antiguo (retrocompatibilidad)
+            if (GameManager.Instance != null)
+            {
+                UnityEngine.Debug.Log("[LevelEndFlag] Notificando a GameManager...");
+                GameManager.Instance.CompleteLevel();
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("[LevelEndFlag] No se encontró GameManager en la escena");
+            }
         }
     }
 
@@ -210,4 +248,19 @@ public class LevelEndFlag : MonoBehaviour
         // Dibujar una línea hacia arriba para indicar que es la bandera
         Gizmos.DrawLine(transform.position, transform.position + Vector3.up * FlagSize.y);
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Test - Completar Nivel")]
+    private void TestCompleteLevel()
+    {
+        if (Application.isPlaying && !levelCompleted)
+        {
+            CompleteLevel();
+        }
+        else if (!Application.isPlaying)
+        {
+            UnityEngine.Debug.LogWarning("[LevelEndFlag] Solo funciona en modo Play");
+        }
+    }
+#endif
 }

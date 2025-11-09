@@ -119,6 +119,58 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &25287404
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 25287406}
+  - component: {fileID: 25287405}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &25287405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25287404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d8eec647e512654eab160e52c1811c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelSystem.LevelManager
+  levelConfigurations:
+  - {fileID: 11400000, guid: e8705da838cb813489d817bdf08cb719, type: 2}
+  - {fileID: 11400000, guid: e3c05bbd8564cf24e90da9a45b8ad555, type: 2}
+  - {fileID: 11400000, guid: 5b97d072a2bcda94585078cfd1454dfc, type: 2}
+  - {fileID: 11400000, guid: c5321dbbd93c5c443aa15e677638b456, type: 2}
+  - {fileID: 11400000, guid: 2def4a7a7634a0e42a4eae86b3342282, type: 2}
+  currentLevelIndex: 0
+  isLoadingScene: 0
+--- !u!4 &25287406
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25287404}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &399216405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1118,8 +1170,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8523ac6c7ab0b5641af0c9a2e3d45aea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  gameSceneName: Level1
+  gameSceneName: N1_A
   loadingSceneName: Loading
+  videoIntroSceneName: VideoIntro
+  useVideoIntro: 1
   panelMain: {fileID: 1794323522}
   panelOptions: {fileID: 1168450884}
   btnPlay: {fileID: 562799683}
@@ -1529,8 +1583,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 1085.1, y: 477.05}
-  m_SizeDelta: {x: 2170.2, y: 954.11}
+  m_AnchoredPosition: {x: 960, y: 540}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1794323524
 MonoBehaviour:
@@ -1767,3 +1821,4 @@ SceneRoots:
   - {fileID: 1960187792}
   - {fileID: 1480852623}
   - {fileID: 1635553051}
+  - {fileID: 25287406}
