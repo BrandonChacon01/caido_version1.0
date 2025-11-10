@@ -153,7 +153,17 @@ public class LevelEndFlag : MonoBehaviour
         levelCompleted = true;
         UnityEngine.Debug.Log("[LevelEndFlag] ¡Nivel completado! Tocaste la bandera");
 
-        // 🔹 AGREGADO: Detener el timer
+        // 🔹 NUEVO: Pausar el juego durante la transición
+        PauseManager.Instance.Pause(PauseReason.LevelComplete);
+
+        // Notificar al PauseMenuController que el nivel está completo
+        PauseMenuController pauseMenuController = FindFirstObjectByType<PauseMenuController>();
+        if (pauseMenuController != null)
+        {
+            pauseMenuController.SetLevelCompleteState(true);
+        }
+
+        // Detener el timer
         if (levelTimer != null)
         {
             levelTimer.StopTimer();
@@ -173,10 +183,21 @@ public class LevelEndFlag : MonoBehaviour
     /// <summary>
     /// Notifica al sistema de gestión de niveles después del delay
     /// </summary>
+    /// <summary>
+    /// Notifica al sistema de gestión de niveles después del delay
+    /// </summary>
     private System.Collections.IEnumerator NotifyLevelCompletion()
     {
-        // Esperar el delay de transición
-        yield return new WaitForSeconds(transitionDelay);
+        // Esperar el delay de transición (usando unscaledDeltaTime porque el juego está pausado)
+        float elapsed = 0f;
+        while (elapsed < transitionDelay)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        // 🔹 NUEVO: Reanudar el juego antes de cambiar de escena
+        PauseManager.Instance.ForceResume();
 
         if (useLevelManager)
         {

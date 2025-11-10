@@ -69,6 +69,13 @@ namespace LevelSystem
                 UpdateTimerDisplay();
                 UpdateTimerColor();
             }
+
+            // 🔹 NUEVO: Actualizar display incluso cuando está pausado (para que se vea el tiempo congelado)
+            else if (!isRunning && !isCompleted)
+            {
+                UpdateTimerDisplay();
+                UpdateTimerColor();
+            }
         }
 
         /// <summary>

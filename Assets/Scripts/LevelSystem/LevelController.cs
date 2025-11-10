@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
@@ -11,14 +11,14 @@ namespace LevelSystem
         [Tooltip("Referencia al objeto Canvas que contiene el UI del nombre del nivel")]
         public GameObject levelNameUICanvas;
 
-        [Tooltip("Texto donde se mostrará el nombre del nivel (TextMeshPro)")]
+        [Tooltip("Texto donde se mostrarÃ¡ el nombre del nivel (TextMeshPro)")]
         public TextMeshProUGUI levelNameText;
 
-        [Header("Configuración Manual (Opcional)")]
-        [Tooltip("Si está activado, usa la configuración manual en lugar del LevelManager")]
+        [Header("ConfiguraciÃ³n Manual (Opcional)")]
+        [Tooltip("Si estÃ¡ activado, usa la configuraciÃ³n manual en lugar del LevelManager")]
         public bool useManualConfig = false;
 
-        [Tooltip("Configuración manual del nivel (solo si useManualConfig está activado)")]
+        [Tooltip("ConfiguraciÃ³n manual del nivel (solo si useManualConfig estÃ¡ activado)")]
         public LevelConfiguration manualLevelConfig;
 
         private LevelConfiguration currentConfig;
@@ -30,11 +30,11 @@ namespace LevelSystem
 
         private void InitializeLevel()
         {
-            // Obtener la configuración del nivel
+            // Obtener la configuraciÃ³n del nivel
             if (useManualConfig && manualLevelConfig != null)
             {
                 currentConfig = manualLevelConfig;
-                UnityEngine.Debug.Log($"[LevelController] Usando configuración manual: {currentConfig.levelName}");
+                UnityEngine.Debug.Log($"[LevelController] Usando configuraciÃ³n manual: {currentConfig.levelName}");
             }
             else
             {
@@ -42,12 +42,12 @@ namespace LevelSystem
 
                 if (currentConfig == null)
                 {
-                    UnityEngine.Debug.LogError("[LevelController] No se pudo obtener la configuración del nivel actual desde LevelManager");
+                    UnityEngine.Debug.LogError("[LevelController] No se pudo obtener la configuraciÃ³n del nivel actual desde LevelManager");
                     return;
                 }
             }
 
-            UnityEngine.Debug.Log($"[LevelController] Inicializando nivel: {currentConfig.levelName} (Número: {currentConfig.levelNumber})");
+            UnityEngine.Debug.Log($"[LevelController] Inicializando nivel: {currentConfig.levelName} (NÃºmero: {currentConfig.levelNumber})");
 
             // Mostrar el nombre del nivel
             if (levelNameUICanvas != null && levelNameText != null)
@@ -69,19 +69,42 @@ namespace LevelSystem
             levelNameText.text = currentConfig.levelName;
             levelNameText.color = currentConfig.levelNameColor;
 
-            // Animación de aparición (fade in)
-            yield return StartCoroutine(FadeText(levelNameText, 0f, 1f, 0.5f));
+            // AnimaciÃ³n de apariciÃ³n (fade in) - usando tiempo real
+            yield return StartCoroutine(FadeTextRealtime(levelNameText, 0f, 1f, 0.5f));
 
-            // Mantener visible durante el tiempo configurado
-            yield return new WaitForSeconds(currentConfig.levelNameDisplayTime);
+            // Usar WaitForSecondsRealtime en lugar de WaitForSeconds
+            yield return new WaitForSecondsRealtime(currentConfig.levelNameDisplayTime);
 
-            // Animación de desaparición (fade out)
-            yield return StartCoroutine(FadeText(levelNameText, 1f, 0f, 0.5f));
+            // AnimaciÃ³n de desapariciÃ³n (fade out) - usando tiempo real
+            yield return StartCoroutine(FadeTextRealtime(levelNameText, 1f, 0f, 0.5f));
 
-            // Desactivar el canvas
+            // Desactivar el canvas completamente
             levelNameUICanvas.SetActive(false);
         }
 
+        /// <summary>
+        /// Fade de texto usando tiempo real (no afectado por Time.timeScale)
+        /// </summary>
+        private IEnumerator FadeTextRealtime(TextMeshProUGUI text, float startAlpha, float endAlpha, float duration)
+        {
+            float elapsedTime = 0f;
+            Color color = text.color;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.unscaledDeltaTime; // Usar tiempo real
+                float alpha = Mathf.Lerp(startAlpha, endAlpha, elapsedTime / duration);
+                color.a = alpha;
+                text.color = color;
+                yield return null;
+            }
+
+            // Asegurar que termina en el alpha final
+            color.a = endAlpha;
+            text.color = color;
+        }
+
+        // MANTÃ‰N el mÃ©todo FadeText original por si acaso (opcional, puedes eliminarlo)
         private IEnumerator FadeText(TextMeshProUGUI text, float startAlpha, float endAlpha, float duration)
         {
             float elapsedTime = 0f;
@@ -96,13 +119,12 @@ namespace LevelSystem
                 yield return null;
             }
 
-            // Asegurar que termina en el alpha final
             color.a = endAlpha;
             text.color = color;
         }
 
         /// <summary>
-        /// Método público para obtener la configuración actual del nivel
+        /// MÃ©todo pÃºblico para obtener la configuraciÃ³n actual del nivel
         /// </summary>
         public LevelConfiguration GetCurrentConfig()
         {
@@ -117,14 +139,14 @@ namespace LevelSystem
             {
                 UnityEngine.Debug.Log($"=== LEVEL INFO ===");
                 UnityEngine.Debug.Log($"Nombre: {currentConfig.levelName}");
-                UnityEngine.Debug.Log($"Número: {currentConfig.levelNumber}");
+                UnityEngine.Debug.Log($"NÃºmero: {currentConfig.levelNumber}");
                 UnityEngine.Debug.Log($"Escena: {currentConfig.levelSceneName}");
                 UnityEngine.Debug.Log($"Es Final: {currentConfig.isFinalLevel}");
                 UnityEngine.Debug.Log($"=================");
             }
             else
             {
-                UnityEngine.Debug.LogWarning("No hay configuración cargada");
+                UnityEngine.Debug.LogWarning("No hay configuraciÃ³n cargada");
             }
         }
 #endif
