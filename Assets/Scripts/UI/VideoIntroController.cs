@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
-using LevelSystem; // 🔹 AGREGADO
+using LevelSystem;
 
 /// <summary>
 /// Controlador para reproducir un video introductorio antes de iniciar el juego
@@ -19,6 +19,7 @@ public class VideoIntroController : MonoBehaviour
 
     private bool videoFinished = false;
     private bool isLoadingNextScene = false;
+    private bool levelsGenerated = false; // 🔹 NUEVO
 
     private void Start()
     {
@@ -40,6 +41,9 @@ public class VideoIntroController : MonoBehaviour
             nextSceneName = LoadingPayload.NextScene;
         }
 
+        // 🔹 NUEVO: Generar la selección aleatoria de niveles al inicio del video
+        GenerateLevelSequence();
+
         // Configurar eventos del VideoPlayer
         videoPlayer.loopPointReached += OnVideoFinished;
 
@@ -57,6 +61,32 @@ public class VideoIntroController : MonoBehaviour
             {
                 SkipVideo();
             }
+        }
+    }
+
+    /// <summary>
+    /// Genera la secuencia aleatoria de niveles
+    /// </summary>
+    private void GenerateLevelSequence()
+    {
+        if (levelsGenerated)
+        {
+            UnityEngine.Debug.LogWarning("[VideoIntroController] Los niveles ya fueron generados");
+            return;
+        }
+
+        // Solo generar si vamos a usar el sistema de niveles
+        if (LoadingPayload.UseLevelSystem)
+        {
+            UnityEngine.Debug.Log("[VideoIntroController] Generando secuencia aleatoria de niveles...");
+            LevelRandomizer.Instance.GenerateRandomLevelSequence();
+            levelsGenerated = true;
+
+            UnityEngine.Debug.Log($"[VideoIntroController] ✅ Secuencia generada. Semilla: {LevelRandomizer.Instance.GeneratedSeed}");
+        }
+        else
+        {
+            UnityEngine.Debug.Log("[VideoIntroController] Sistema de niveles desactivado, usando flujo tradicional");
         }
     }
 
@@ -94,7 +124,7 @@ public class VideoIntroController : MonoBehaviour
 
         isLoadingNextScene = true;
 
-        // 🔹 NUEVO: Verificar si debemos usar el sistema de niveles
+        // Verificar si debemos usar el sistema de niveles
         if (LoadingPayload.UseLevelSystem && LevelManager.Instance != null)
         {
             UnityEngine.Debug.Log("[VideoIntroController] Iniciando sistema de niveles...");
