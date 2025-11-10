@@ -156,3 +156,5 @@ MonoBehaviour:
   CompletionSound: {fileID: 0}
   AnimateFlag: 1
   RotationSpeed: 50
+  useLevelManager: 1
+  transitionDelay: 2.33
