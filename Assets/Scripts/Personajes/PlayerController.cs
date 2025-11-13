@@ -42,6 +42,7 @@ public class PlayerController : CharacterStats
     // --- Variables de Power-Up ---
     private float velocidadOriginal;
     private bool conPowerUpVelocidad = false;
+    private Coroutine activeSpeedPowerUp = null;
 
     [Header("Sistema de Derretimiento")]
     [SerializeField] private float meltRate = 0.5f;
@@ -240,20 +241,25 @@ public class PlayerController : CharacterStats
 
     public void ActivarPowerUpVelocidad(float multiplicadorVelocidad, float duracion)
     {
-        if (!conPowerUpVelocidad)
+        if (activeSpeedPowerUp != null)
         {
-            StartCoroutine(PowerUpVelocidadCoroutine(multiplicadorVelocidad, duracion));
+            StopCoroutine(activeSpeedPowerUp);
         }
+
+        activeSpeedPowerUp = StartCoroutine(PowerUpVelocidadCoroutine(multiplicadorVelocidad, duracion));
     }
 
     private IEnumerator PowerUpVelocidadCoroutine(float multiplicador, float tiempo)
     {
         conPowerUpVelocidad = true;
         moveSpeed *= multiplicador;
-        Debug.Log("�Power-up de velocidad activado! Velocidad actual: " + moveSpeed);
+        Debug.Log("¡Power-up de velocidad activado! Velocidad actual: " + moveSpeed);
+
         yield return new WaitForSeconds(tiempo);
+
         moveSpeed = velocidadOriginal;
         conPowerUpVelocidad = false;
+        activeSpeedPowerUp = null; // --- NUEVA LÍNEA --- (Se limpia al terminar)
         Debug.Log("Power-up de velocidad terminado. Velocidad restaurada a: " + moveSpeed);
     }
 
@@ -365,20 +371,33 @@ public class PlayerController : CharacterStats
         anim.SetBool("running", false); // Detiene la animación de correr
 
         // 2. Ejecuta la lógica de daño (OverlapCircle)
-        MeleeAttack(); 
-        
+        MeleeAttack();
+
         // 3. Espera a que termine la animación
-        yield return new WaitForSeconds(kickAnimationDuration); 
+        yield return new WaitForSeconds(kickAnimationDuration);
 
         // 4. Termina la animación
         anim.SetBool("isKicking", false);
 
         // 5. Espera el resto del cooldown
         // (Ej: 1s Cooldown - 0.3s Anim = 0.7s de espera)
-        yield return new WaitForSeconds(meleeAttackCooldown - kickAnimationDuration); 
+        yield return new WaitForSeconds(meleeAttackCooldown - kickAnimationDuration);
 
         // 6. Permite patear de nuevo
-        isKicking = false; 
+        isKicking = false;
+    }
+    
+    public void CancelSpeedPowerUp()
+    {
+        if (activeSpeedPowerUp != null)
+        {
+            StopCoroutine(activeSpeedPowerUp);
+        }
+
+        moveSpeed = velocidadOriginal;
+        conPowerUpVelocidad = false;
+        activeSpeedPowerUp = null;
+        Debug.Log("Power-up cancelado. Velocidad restaurada.");
     }
 }
 
