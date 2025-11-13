@@ -92,6 +92,10 @@ public class GameStatsManager : MonoBehaviour
         {
             currentStats.totalPlayTime = GetTotalAccumulatedTime();
         }
+
+        // 🔹 AGREGADO: Incluir la seed en las estadísticas
+        currentStats.levelSeed = levelSeed;
+
         return currentStats;
     }
 
@@ -242,6 +246,9 @@ public class GameStats
     [Header("Acciones")]
     public int totalJumps = 0;
 
+    [Header("Semilla")]
+    public string levelSeed = ""; // 🔹 AGREGADO: Seed de la run (ej: "1A2B3A4B5")
+
     // 🔹 AGREGA MÁS CAMPOS SEGÚN NECESITES EN EL FUTURO
     // public int totalDeaths = 0;
     // public int totalDashes = 0;
@@ -253,5 +260,6 @@ public class GameStats
         totalPlayTime = 0f;
         levelsCompleted = 0;
         totalJumps = 0;
+        levelSeed = ""; // 🔹 AGREGADO
     }
 }
