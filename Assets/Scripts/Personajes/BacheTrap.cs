@@ -33,7 +33,7 @@ public class BacheTrap : MonoBehaviour
                 if (oneTimeUse)
                 {
                     // Opción A: Destruir el objeto completo
-                    // Destroy(gameObject); 
+                    Destroy(gameObject); 
                     
                     // Opción B: Solo desactivar el collider para que se siga viendo pero no funcione
                     GetComponent<Collider2D>().enabled = false;
