@@ -44,11 +44,50 @@ public class MainMenu : MonoBehaviour
             UnityEngine.Debug.Log("[MainMenu] Progreso del LevelManager reseteado");
         }
 
-        // 🔹 AGREGADO: Resetear estadísticas al volver al menú
+        // Resetear estadísticas al volver al menú
         if (GameStatsManager.Instance != null)
         {
             GameStatsManager.Instance.ResetStats();
             UnityEngine.Debug.Log("[MainMenu] Estadísticas reseteadas");
+        }
+
+        // 🔹 NUEVO: Verificar si hay sesión iniciada
+        CheckAuthenticationStatus();
+    }
+
+    /// <summary>
+    /// Verifica si el usuario está logueado y guarda sus datos
+    /// </summary>
+    private void CheckAuthenticationStatus()
+    {
+        if (SupabaseAuthManager.Instance != null)
+        {
+            bool isLoggedIn = SupabaseAuthManager.Instance.IsLoggedIn;
+
+            if (isLoggedIn)
+            {
+                string displayName = SupabaseAuthManager.Instance.CurrentUserDisplayName;
+                string userId = SupabaseAuthManager.Instance.CurrentUserId;
+
+                UnityEngine.Debug.Log($"[MainMenu] Usuario logueado: {displayName} (ID: {userId})");
+
+                // Guardar los datos en LoadingPayload para usarlos después
+                LoadingPayload.UserDisplayName = displayName;
+                LoadingPayload.UserId = userId;
+                LoadingPayload.IsUserLoggedIn = true;
+            }
+            else
+            {
+                UnityEngine.Debug.Log("[MainMenu] Usuario no logueado (modo invitado)");
+                LoadingPayload.UserDisplayName = "Invitado";
+                LoadingPayload.UserId = "";
+                LoadingPayload.IsUserLoggedIn = false;
+            }
+        }
+        else
+        {
+            UnityEngine.Debug.LogWarning("[MainMenu] SupabaseAuthManager no encontrado");
+            LoadingPayload.IsUserLoggedIn = false;
         }
     }
 
@@ -68,7 +107,10 @@ public class MainMenu : MonoBehaviour
 
     private void OnPlay()
     {
-        // 🔹 AGREGADO: Iniciar tracking de estadísticas
+        // 🔹 MODIFICADO: Verificar y guardar estado de autenticación al dar Play
+        CheckAuthenticationStatus();
+
+        // Iniciar tracking de estadísticas
         if (GameStatsManager.Instance != null)
         {
             GameStatsManager.Instance.ResetStats();
@@ -137,9 +179,14 @@ public class MainMenu : MonoBehaviour
     }
 }
 
-// Contenedor para pasar datos entre escenas
+// 🔹 MODIFICADO: Contenedor para pasar datos entre escenas (ahora incluye datos de autenticación)
 public static class LoadingPayload
 {
     public static string NextScene;
     public static bool UseLevelSystem;
+
+    // Datos de autenticación
+    public static bool IsUserLoggedIn = false;
+    public static string UserDisplayName = "Invitado";
+    public static string UserId = "";
 }
