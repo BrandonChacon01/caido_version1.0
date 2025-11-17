@@ -17,7 +17,7 @@ public class CholitoAI : CharacterStats
     [Header("IA de Movimiento")]
     [SerializeField] private float stoppingDistance = 1.5f;
 
-    [Header("Detecci�n de Entorno")]
+    [Header("Detección de Entorno")]
     [SerializeField] private Transform ledgeCheck;
     [SerializeField] private float checkDistance = 0.2f;
     [SerializeField] private LayerMask groundLayer;
@@ -38,12 +38,24 @@ public class CholitoAI : CharacterStats
             healthSlider.maxValue = maxHealth;
             healthSlider.value = currentHealth;
         }
+
+        if (Player == null)
+        {
+            try
+            {
+                Player = GameObject.FindGameObjectWithTag("Player").transform;
+            }
+            catch
+            {
+                Debug.LogError("CholitoAI: No se pudo encontrar al Jugador. Asegúrate de que el jugador tenga el Tag 'Player'.");
+            }
+        }
     }
 
 
     void Update()
     {
-        if (Player == null) return;
+        if (Player == null) return; // Si no hay jugador (ni asignado ni encontrado), no hace nada
 
         Vector3 directionToPlayer = Player.position - transform.position;
 

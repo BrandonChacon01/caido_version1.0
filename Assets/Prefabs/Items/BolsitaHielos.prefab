@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e1d8325b71620429e6a58e4c7ab995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BolsitaHielos
-  vidaQueRecupera: 1
+  vidaQueRecupera: 10
 --- !u!58 &178646500559455024
 CircleCollider2D:
   m_ObjectHideFlags: 0
