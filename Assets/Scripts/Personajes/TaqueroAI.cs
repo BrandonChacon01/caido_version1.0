@@ -6,17 +6,17 @@ using UnityEngine.UI;
 public class TaqueroAI : CharacterStats
 {
     [Header("Referencias")]
-    [SerializeField] private Transform player;
+    [SerializeField] public Transform player;
     [SerializeField] private GameObject tacoPrefab;
     [SerializeField] private Transform firePoint;
 
-    [Header("IA - Configuración")]
+    [Header("IA - Configuraciï¿½n")]
     [SerializeField] private float attackDistance = 6f;
     [SerializeField] private float attackRate = 2f;
     [SerializeField] private float contactDamage = 1f; 
     [SerializeField] private float baseScale = 1.0f;
 
-    [Header("Detección de Entorno (Ledge Check)")]
+    [Header("Detecciï¿½n de Entorno (Ledge Check)")]
     [SerializeField] private Transform ledgeCheck;
     [SerializeField] private float checkDistance = 1.0f;
     [SerializeField] private LayerMask groundLayer;
@@ -45,7 +45,7 @@ public class TaqueroAI : CharacterStats
             }
             catch
             {
-                Debug.LogError("TaqueroAI: No se encontró al jugador.");
+                Debug.LogError("TaqueroAI: No se encontrï¿½ al jugador.");
             }
         }
 
@@ -57,12 +57,12 @@ public class TaqueroAI : CharacterStats
     }
 
 
-    // Decide qué hacer (moverse o disparar)
+    // Decide quï¿½ hacer (moverse o disparar)
     void Update()
     {
         if (player == null) return;
 
-        // Si está en el cooldown del ataque de DISPARO, no hace nada
+        // Si estï¿½ en el cooldown del ataque de DISPARO, no hace nada
         if (isAttacking)
         {
             currentMoveDirection = 0f;
@@ -118,7 +118,7 @@ public class TaqueroAI : CharacterStats
     // Corrutina que spawnea el taco y espera
     private IEnumerator RangedAttack()
     {
-        isAttacking = true; // Previene que se mueva y dispare más
+        isAttacking = true; // Previene que se mueva y dispare mï¿½s
 
         if (tacoPrefab != null && firePoint != null)
         {
@@ -135,7 +135,7 @@ public class TaqueroAI : CharacterStats
         isAttacking = false;
     }
 
-    // Método para recibir daño de las balas del jugador
+    // Mï¿½todo para recibir daï¿½o de las balas del jugador
     public void Hit(float damage)
     {
         base.TakeDamage(damage);
@@ -146,7 +146,7 @@ public class TaqueroAI : CharacterStats
         }
     }
 
-    // Método para hacer daño POR CONTACTO
+    // Mï¿½todo para hacer daï¿½o POR CONTACTO
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))

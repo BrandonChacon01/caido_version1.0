@@ -42,7 +42,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Interludios/Interludio3.unity
     guid: cb31189cd03acac498382bc87a0bc119
   - enabled: 1
-    path: Assets/Scenes/Niveles/Levels4/N4_A.unity
+    path: Assets/Scenes/Niveles/N4_A.unity
     guid: 118fa5ff35f3feb40b4617d6284532f1
   - enabled: 1
     path: Assets/Scenes/Niveles/Levels4/N4_B.unity

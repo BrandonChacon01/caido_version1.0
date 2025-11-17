@@ -342,7 +342,7 @@ MonoBehaviour:
   vecinoPrefab: {fileID: 5038250446558785672}
   detectionRadius: 1
   contactDamage: 2
-  attackWaitTime: 1
+  attackWaitTime: 3
   baseScale: 1
   ledgeCheck: {fileID: 8476779767968671030}
   checkDistance: 0.2
