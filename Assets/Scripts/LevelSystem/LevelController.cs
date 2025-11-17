@@ -14,6 +14,23 @@ namespace LevelSystem
         [Tooltip("Texto donde se mostrará el nombre del nivel (TextMeshPro)")]
         public TextMeshProUGUI levelNameText;
 
+        [Header("Audio")]
+        [Tooltip("AudioSource para la música de fondo del nivel")]
+        public AudioSource backgroundMusicSource;
+
+        [Tooltip("Clip de audio que se reproducirá como música de fondo")]
+        public AudioClip backgroundMusicClip;
+
+        [Tooltip("Volumen de la música de fondo (0-1)")]
+        [Range(0f, 1f)]
+        public float musicVolume = 0.5f;
+
+        [Tooltip("¿Reproducir la música en loop?")]
+        public bool loopMusic = true;
+
+        [Tooltip("Duración del fade in de la música (segundos)")]
+        public float musicFadeInDuration = 1f;
+
         [Header("Configuración Manual (Opcional)")]
         [Tooltip("Si está activado, usa la configuración manual en lugar del LevelManager")]
         public bool useManualConfig = false;
@@ -49,6 +66,9 @@ namespace LevelSystem
 
             UnityEngine.Debug.Log($"[LevelController] Inicializando nivel: {currentConfig.levelName} (Número: {currentConfig.levelNumber})");
 
+            // Iniciar música de fondo
+            InitializeBackgroundMusic();
+
             // Mostrar el nombre del nivel
             if (levelNameUICanvas != null && levelNameText != null)
             {
@@ -58,6 +78,49 @@ namespace LevelSystem
             {
                 UnityEngine.Debug.LogWarning("[LevelController] No hay referencias UI configuradas para mostrar el nombre del nivel");
             }
+        }
+
+        private void InitializeBackgroundMusic()
+        {
+            if (backgroundMusicSource == null)
+            {
+                UnityEngine.Debug.LogWarning("[LevelController] No hay AudioSource asignado para la música de fondo");
+                return;
+            }
+
+            if (backgroundMusicClip == null)
+            {
+                UnityEngine.Debug.LogWarning("[LevelController] No hay AudioClip asignado para la música de fondo");
+                return;
+            }
+
+            // Configurar el AudioSource
+            backgroundMusicSource.clip = backgroundMusicClip;
+            backgroundMusicSource.loop = loopMusic;
+            backgroundMusicSource.volume = 0f; // Empezar en volumen 0 para el fade in
+
+            // Reproducir música
+            backgroundMusicSource.Play();
+
+            // Iniciar fade in
+            StartCoroutine(FadeInMusic(backgroundMusicSource, musicVolume, musicFadeInDuration));
+
+            UnityEngine.Debug.Log($"[LevelController] Música de fondo iniciada: {backgroundMusicClip.name}");
+        }
+
+        private IEnumerator FadeInMusic(AudioSource audioSource, float targetVolume, float duration)
+        {
+            float elapsedTime = 0f;
+            float startVolume = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+                audioSource.volume = Mathf.Lerp(startVolume, targetVolume, elapsedTime / duration);
+                yield return null;
+            }
+
+            audioSource.volume = targetVolume;
         }
 
         private IEnumerator ShowLevelNameCoroutine()
@@ -129,6 +192,33 @@ namespace LevelSystem
         public LevelConfiguration GetCurrentConfig()
         {
             return currentConfig;
+        }
+
+        /// <summary>
+        /// Método público para detener la música de fondo con fade out
+        /// </summary>
+        public void StopBackgroundMusic(float fadeOutDuration = 1f)
+        {
+            if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+            {
+                StartCoroutine(FadeOutMusic(backgroundMusicSource, fadeOutDuration));
+            }
+        }
+
+        private IEnumerator FadeOutMusic(AudioSource audioSource, float duration)
+        {
+            float elapsedTime = 0f;
+            float startVolume = audioSource.volume;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+                audioSource.volume = Mathf.Lerp(startVolume, 0f, elapsedTime / duration);
+                yield return null;
+            }
+
+            audioSource.volume = 0f;
+            audioSource.Stop();
         }
 
 #if UNITY_EDITOR
