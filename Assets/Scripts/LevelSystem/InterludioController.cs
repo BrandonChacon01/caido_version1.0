@@ -17,6 +17,26 @@ namespace LevelSystem
         [Tooltip("Panel opcional de fondo/overlay")]
         public GameObject backgroundPanel;
 
+        [Header("Audio")]
+        [Tooltip("AudioSource para la música de fondo del interludio")]
+        public AudioSource backgroundMusicSource;
+
+        [Tooltip("Clip de audio que se reproducirá como música de fondo")]
+        public AudioClip backgroundMusicClip;
+
+        [Tooltip("Volumen de la música de fondo (0-1)")]
+        [Range(0f, 1f)]
+        public float musicVolume = 0.5f;
+
+        [Tooltip("¿Reproducir la música en loop?")]
+        public bool loopMusic = true;
+
+        [Tooltip("Duración del fade in de la música (segundos)")]
+        public float musicFadeInDuration = 1f;
+
+        [Tooltip("Duración del fade out de la música al salir (segundos)")]
+        public float musicFadeOutDuration = 0.5f;
+
         [Header("Configuración")]
         [Tooltip("Sprite/imagen específica para este interludio")]
         public Sprite interludioSprite;
@@ -79,8 +99,70 @@ namespace LevelSystem
                 }
             }
 
+            // Iniciar música de fondo
+            InitializeBackgroundMusic();
+
             // Iniciar la secuencia de interludio
             StartCoroutine(InterludioSequence());
+        }
+
+        private void InitializeBackgroundMusic()
+        {
+            if (backgroundMusicSource == null)
+            {
+                UnityEngine.Debug.LogWarning("[InterludioController] No hay AudioSource asignado para la música de fondo");
+                return;
+            }
+
+            if (backgroundMusicClip == null)
+            {
+                UnityEngine.Debug.LogWarning("[InterludioController] No hay AudioClip asignado para la música de fondo");
+                return;
+            }
+
+            // Configurar el AudioSource
+            backgroundMusicSource.clip = backgroundMusicClip;
+            backgroundMusicSource.loop = loopMusic;
+            backgroundMusicSource.volume = 0f; // Empezar en volumen 0 para el fade in
+
+            // Reproducir música
+            backgroundMusicSource.Play();
+
+            // Iniciar fade in
+            StartCoroutine(FadeInMusic(backgroundMusicSource, musicVolume, musicFadeInDuration));
+
+            UnityEngine.Debug.Log($"[InterludioController] Música de fondo iniciada: {backgroundMusicClip.name}");
+        }
+
+        private IEnumerator FadeInMusic(AudioSource audioSource, float targetVolume, float duration)
+        {
+            float elapsedTime = 0f;
+            float startVolume = 0f;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(startVolume, targetVolume, elapsedTime / duration);
+                yield return null;
+            }
+
+            audioSource.volume = targetVolume;
+        }
+
+        private IEnumerator FadeOutMusic(AudioSource audioSource, float duration)
+        {
+            float elapsedTime = 0f;
+            float startVolume = audioSource.volume;
+
+            while (elapsedTime < duration)
+            {
+                elapsedTime += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(startVolume, 0f, elapsedTime / duration);
+                yield return null;
+            }
+
+            audioSource.volume = 0f;
+            audioSource.Stop();
         }
 
         private IEnumerator InterludioSequence()
@@ -108,7 +190,24 @@ namespace LevelSystem
 
             UnityEngine.Debug.Log("[InterludioController] Continuando al siguiente nivel...");
 
-            // Cargar el siguiente nivel a través del LevelManager
+            // Detener música con fade out antes de cargar el siguiente nivel
+            if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+            {
+                StartCoroutine(FadeOutAndLoadNextLevel());
+            }
+            else
+            {
+                // Si no hay música, cargar directamente
+                LevelManager.Instance.LoadNextLevel();
+            }
+        }
+
+        private IEnumerator FadeOutAndLoadNextLevel()
+        {
+            // Hacer fade out de la música
+            yield return StartCoroutine(FadeOutMusic(backgroundMusicSource, musicFadeOutDuration));
+
+            // Cargar el siguiente nivel
             LevelManager.Instance.LoadNextLevel();
         }
 
