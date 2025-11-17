@@ -648,6 +648,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner_Vecindad (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4273514094246782937, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_SortingOrder
+      value: -2
+      objectReference: {fileID: 0}
     - target: {fileID: 6235895810186447220, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 6.2650704
