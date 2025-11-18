@@ -5,10 +5,19 @@ public class SpeedBoostPatch : MonoBehaviour
     [Header("Configuración")]
     [SerializeField] private float multiplicadorVelocidad = 2f;
     [SerializeField] private float lifeTimeInSeconds = 5f;
+    [SerializeField] private bool gravedad = false;
 
     // Se llama cuando el objeto es creado
     private void Start()
     {
+        if (gravedad == false)
+        {
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.gravityScale = 0f;
+            }
+        }
         // Se destruye a sí mismo después de X segundos
         Destroy(gameObject, lifeTimeInSeconds);
     }
