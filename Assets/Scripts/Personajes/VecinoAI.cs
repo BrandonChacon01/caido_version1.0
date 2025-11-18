@@ -3,169 +3,90 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VecinoAI : CharacterStats
+// Hereda de la nueva clase base
+public class VecinoAI : BaseEnemyAI
 {
-    [Header("Referencias")]
-    public Transform player;
+    [Header("Ataque Específico (Vecino)")]
+    [Tooltip("El prefab del clon que spawnea al atacar.")]
     [SerializeField] private GameObject vecinoPrefab;
-
-    [Header("IA - Configuraci�n")]
-    [SerializeField] private float detectionRadius = 8f;
-    [SerializeField] private float contactDamage = 2f;
+    [Tooltip("Tiempo de cooldown después de un ataque por contacto.")]
     [SerializeField] private float attackWaitTime = 1.5f;
-    [SerializeField] private float baseScale = 1.0f;
-
-    [Header("Detecci�n de Entorno (Ledge Check)")]
-    [SerializeField] private Transform ledgeCheck;
-    [SerializeField] private float checkDistance = 0.1f;
-    [SerializeField] private LayerMask groundLayer;
-
-    [Header("UI")]
-    [SerializeField] private Slider healthSlider;
-
-    private bool isAttacking = false;
-    private float currentMoveDirection = 0f;
-
-    protected override void Awake()
+    
+    // Cuando está en modo de persecución debe moverse hacia el jugador.
+    protected override void HandleChase()
     {
-        base.Awake();
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-
-        if (player == null)
+        if (player != null)
         {
-            try
-            {
-                player = GameObject.FindGameObjectWithTag("Player").transform;
-            }
-            catch
-            {
-                Debug.LogError("VecinoAI: No se encontr� al jugador.");
-            }
-        }
-
-        if (healthSlider != null)
-        {
-            healthSlider.maxValue = maxHealth;
-            healthSlider.value = currentHealth;
-        }
-    }
-    void Update()
-    {
-        if (player == null) return;
-
-        if (isAttacking)
-        {
-            currentMoveDirection = 0f;
-            if (anim != null) anim.SetBool("isMoving", false);
-            return;
-        }
-
-        float distance = Vector2.Distance(transform.position, player.position);
-        Vector3 directionToPlayer = player.position - transform.position;
-
-        if (distance <= detectionRadius)
-        {
-            currentMoveDirection = Mathf.Sign(directionToPlayer.x);
-            if (anim != null) anim.SetBool("isMoving", true);
-
-            if (directionToPlayer.x > 0.0f)
-            {
-                transform.localScale = new Vector3(baseScale, baseScale, 1);
-            }
-            else
-            {
-                transform.localScale = new Vector3(-baseScale, baseScale, 1);
-            }
-        }
-        else
-        {
-            currentMoveDirection = 0f;
-            if (anim != null) anim.SetBool("isMoving", false);
-        }
-    }
-    void FixedUpdate()
-    {
-        float actualMoveDirection = currentMoveDirection;
-
-        if (actualMoveDirection != 0f)
-        {
-            bool isGroundedAhead = Physics2D.OverlapCircle(ledgeCheck.position, checkDistance, groundLayer);
-
-            if (!isGroundedAhead)
-            {
-                actualMoveDirection = 0f;
-                if (anim != null) anim.SetBool("isMoving", false);
-            }
-        }
-
-        rb.linearVelocity = new Vector2(actualMoveDirection * moveSpeed, rb.linearVelocity.y);
-    }
-
-    // M�todo para recibir da�o de las balas del jugador
-    public void Hit(float damage)
-    {
-        base.TakeDamage(damage);
-
-        if (healthSlider != null)
-        {
-            healthSlider.value = currentHealth;
+            Vector3 direction = (player.position - transform.position).normalized;
+            transform.position += direction * moveSpeed * Time.deltaTime;
         }
     }
 
-    // M�todo para hacer da�o por contacto
-    private void OnCollisionEnter2D(Collision2D collision)
+    // El Vecino no tiene un "ataque a distancia", así que cuando
+    // está en rango de ataque (HandleAttack), simplemente sigue persiguiendo.
+    protected override void HandleAttack()
     {
+        if (player != null)
+        {
+            Vector3 direction = (player.position - transform.position).normalized;
+            transform.position += direction * moveSpeed * Time.deltaTime;
+        }
+    }
+
+    // --- MÉTODOS DE DAÑO (Sobrescritos) ---
+    protected override void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Si chocamos con el jugador Y no estamos ya en un cooldown
         if (collision.gameObject.CompareTag("Player") && !isAttacking)
         {
             PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
             if (playerScript != null)
             {
-                StartCoroutine(AttackPause(playerScript));
+                // Iniciamos nuestra corrutina de ataque especial
+                StartCoroutine(AttackAndSpawn(playerScript));
             }
         }
     }
 
-    // Corrutina que aplica el da�o, spawnea y espera
-    private IEnumerator AttackPause(PlayerController playerScript)
+    // Esta corrutina es única del Vecino
+    private IEnumerator AttackAndSpawn(PlayerController playerScript)
     {
         isAttacking = true;
+
+        // 1. Aplica el daño por contacto (usando la variable 'contactDamage' heredada)
         playerScript.Hit(contactDamage);
 
+        // 2. Lógica de Spawn
         if (vecinoPrefab != null)
         {
             Vector3 spawnPosition = transform.position + new Vector3(Random.Range(-0.5f, 0.5f), 0.0f, 0);
-
             GameObject newVecinoObj = Instantiate(vecinoPrefab, spawnPosition, Quaternion.identity);
 
+            // Obtenemos los scripts del nuevo clon
             VecinoAI newVecinoAI = newVecinoObj.GetComponent<VecinoAI>();
             CharacterStats newVecinoStats = newVecinoObj.GetComponent<CharacterStats>();
 
+            // Configuramos al clon
             if (newVecinoAI != null && newVecinoStats != null)
             {
-                newVecinoAI.player = this.player;
-                newVecinoStats.moveSpeed = this.moveSpeed * 0.80f;
-                newVecinoAI.vecinoPrefab = null;
+                newVecinoAI.player = this.player; // Le dice a quién perseguir
+                newVecinoStats.moveSpeed = this.moveSpeed * 0.80f; // Es 20% más lento
+                newVecinoAI.vecinoPrefab = null; // Evita que el clon spawnee más clones
             }
         }
 
+        // 3. Espera el cooldown
         yield return new WaitForSeconds(attackWaitTime);
-        isAttacking = false;
+        isAttacking = false; // Termina el estado de "atacando"
     }
 
-    // Dibuja los detectores en el editor
-    private void OnDrawGizmosSelected()
+    // Método para recibir daño (de balas)
+    public void Hit(float damage)
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
-
-        if (ledgeCheck != null)
+        base.TakeDamage(damage); // Llama al método base para restar vida
+        if (healthSlider != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(ledgeCheck.position, checkDistance);
+            healthSlider.value = currentHealth;
         }
     }
 }
