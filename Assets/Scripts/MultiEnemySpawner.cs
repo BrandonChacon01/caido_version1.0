@@ -88,7 +88,7 @@ public class MultiEnemySpawner : MonoBehaviour
         if (enemyStats != null)
         {
             if (enemyStats is PerroAI perro) perro.player = playerTransform;
-            else if (enemyStats is CholitoAI cholito) cholito.Player = playerTransform;
+            else if (enemyStats is CholitoAI cholito) cholito.player = playerTransform;
             else if (enemyStats is VecinoAI vecino) vecino.player = playerTransform;
             else if (enemyStats is TaqueroAI taquero) taquero.player = playerTransform;
             else if (enemyStats is AlbanilAI albanil) albanil.player = playerTransform;

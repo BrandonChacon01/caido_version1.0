@@ -4,12 +4,12 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     // --- Variables Configurables ---
-    [Header("Configuración del Spawner")]
+    [Header("Configuraciï¿½n del Spawner")]
     [SerializeField] private GameObject enemyPrefab; 
     [SerializeField] private float spawnInterval = 10f; 
 
     // --- Referencia Interna ---
-    private Transform playerTransform; // Para decirle al nuevo enemigo a quién seguir
+    private Transform playerTransform; // Para decirle al nuevo enemigo a quiï¿½n seguir
 
     // Awake se llama antes que Start. Es ideal para encontrar referencias.
     void Awake()
@@ -26,7 +26,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    // Start se llama una vez al inicio, después de Awake.
+    // Start se llama una vez al inicio, despuï¿½s de Awake.
     void Start()
     {
         // Si encontramos al jugador, empezamos la rutina de spawn.
@@ -36,16 +36,16 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    // Una Corrutina es una función que puede pausarse.
+    // Una Corrutina es una funciï¿½n que puede pausarse.
     private IEnumerator SpawnEnemyRoutine()
     {
-        // Este bucle se ejecutará para siempre.
+        // Este bucle se ejecutarï¿½ para siempre.
         while (true)
         {
             // 1. Espera 5 segundos
             yield return new WaitForSeconds(spawnInterval);
 
-            // 2. Llama a la función para crear un enemigo
+            // 2. Llama a la funciï¿½n para crear un enemigo
             SpawnEnemy();
         }
     }
@@ -59,14 +59,14 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        // 2. Crea una nueva instancia del enemigo en la posición de este spawner (el carro)
+        // 2. Crea una nueva instancia del enemigo en la posiciï¿½n de este spawner (el carro)
         GameObject newEnemy = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
 
-        // 3. ¡MUY IMPORTANTE! Le decimos al nuevo enemigo dónde está el jugador.
+        // 3. ï¿½MUY IMPORTANTE! Le decimos al nuevo enemigo dï¿½nde estï¿½ el jugador.
         CholitoAI cholo = newEnemy.GetComponent<CholitoAI>();
         if (cholo != null)
         {
-            cholo.Player = playerTransform;
+            cholo.player = playerTransform;
         }
     }
 }
