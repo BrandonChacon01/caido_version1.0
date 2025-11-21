@@ -56,12 +56,8 @@ public class CholitoAI : BaseEnemyAI
 
     // --- GIZMOS (OPCIONAL) ---
     // Podemos añadir un gizmo para la distancia de ataque sobre los gizmos de la base
-    private void OnDrawGizmosSelected()
+    private new void OnDrawGizmosSelected()
     {
-        // BaseEnemyAI no define OnDrawGizmosSelected, por lo que no se puede llamar a base.
-        // Si quieres que la clase base dibuje sus propios gizmos, crea un método protegido
-        // en BaseEnemyAI (por ejemplo DrawBaseGizmos()) y llámalo desde aquí.
-        
         // Dibuja el radio de ataque (cian)
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(transform.position + new Vector3(attackDistance, -1, 0), transform.position + new Vector3(attackDistance, 1, 0));

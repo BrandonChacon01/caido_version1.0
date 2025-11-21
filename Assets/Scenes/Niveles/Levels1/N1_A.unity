@@ -1133,7 +1133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 152562bdb3dff5542bd1964ccccb711c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PositionCameraWall
-  horizontalOffset: 0.5
+  horizontalOffset: 0
 --- !u!4 &576011648 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6235895810186447220, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
@@ -19469,7 +19469,7 @@ MonoBehaviour:
   musicVolume: 0.5
   loopMusic: 1
   musicFadeInDuration: 1
-  useManualConfig: 0
+  useManualConfig: 1
   manualLevelConfig: {fileID: 0}
 --- !u!4 &1171966645
 Transform:

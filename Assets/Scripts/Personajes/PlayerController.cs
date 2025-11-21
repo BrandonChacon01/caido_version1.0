@@ -40,7 +40,6 @@ public class PlayerController : CharacterStats
 
     // --- Variables de Power-Up Velocidad ---
     private float velocidadOriginal;
-    private bool conPowerUpVelocidad = false;
     private Coroutine activeSpeedPowerUp = null;
 
     // +++ NUEVO: Variables de Protector Solar +++
@@ -240,11 +239,9 @@ public class PlayerController : CharacterStats
 
     private IEnumerator PowerUpVelocidadCoroutine(float multiplicador, float tiempo)
     {
-        conPowerUpVelocidad = true;
         moveSpeed *= multiplicador;
         yield return new WaitForSeconds(tiempo);
         moveSpeed = velocidadOriginal;
-        conPowerUpVelocidad = false;
         activeSpeedPowerUp = null;
     }
 
@@ -252,7 +249,6 @@ public class PlayerController : CharacterStats
     {
         if (activeSpeedPowerUp != null) StopCoroutine(activeSpeedPowerUp);
         moveSpeed = velocidadOriginal;
-        conPowerUpVelocidad = false;
         activeSpeedPowerUp = null;
     }
 

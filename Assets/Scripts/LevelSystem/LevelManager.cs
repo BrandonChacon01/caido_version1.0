@@ -13,9 +13,17 @@ namespace LevelSystem
             {
                 if (_instance == null)
                 {
-                    GameObject go = new GameObject("LevelManager");
-                    _instance = go.AddComponent<LevelManager>();
-                    DontDestroyOnLoad(go);
+                    // 1. PRIMERO intentamos buscar uno existente en la escena
+                    // Esto evita crear uno nuevo vacío si ya pusiste uno en el editor
+                    _instance = Object.FindFirstObjectByType<LevelManager>();
+
+                    if (_instance == null)
+                    {
+                        // Solo si NO existe en absoluto, creamos uno nuevo
+                        GameObject go = new GameObject("LevelManager");
+                        _instance = go.AddComponent<LevelManager>();
+                        DontDestroyOnLoad(go);
+                    }
                 }
                 return _instance;
             }
@@ -23,13 +31,15 @@ namespace LevelSystem
 
         [Header("Configuración de Niveles")]
         [Tooltip("Array con todas las configuraciones de niveles en orden")]
-        public LevelConfiguration[] levelConfigurations;
+        // 2. INICIALIZACIÓN: Asignamos un array vacío por defecto para evitar NullReferenceException si no se configura en el inspector
+        public LevelConfiguration[] levelConfigurations = new LevelConfiguration[0];
 
         [Header("Estado Actual")]
         [SerializeField] private int currentLevelIndex = 0;
         [SerializeField] private bool isLoadingScene = false;
 
         public int CurrentLevelIndex => currentLevelIndex;
+
         /// <summary>
         /// Obtiene la configuración del nivel actual
         /// </summary>
@@ -37,20 +47,30 @@ namespace LevelSystem
         {
             get
             {
-                // 🔹 NUEVO: Si usamos niveles aleatorios, generar configuración dinámica
+                // Agregamos chequeo de nulidad extra por seguridad
                 if (LevelRandomizer.Instance != null && LevelRandomizer.Instance.IsGenerated)
                 {
                     return GenerateDynamicLevelConfig(currentLevelIndex);
+                }
+
+                // 3. PROTECCIÓN: Verificamos explícitamente si el array es nulo o está vacío
+                if (levelConfigurations == null || levelConfigurations.Length == 0)
+                {
+                    // Retornamos null para que el LevelController lo maneje en lugar de crashear aquí
+                    return null;
                 }
 
                 if (currentLevelIndex >= 0 && currentLevelIndex < levelConfigurations.Length)
                 {
                     return levelConfigurations[currentLevelIndex];
                 }
+
                 return null;
             }
         }
 
+        // ... El resto de tu código (GenerateDynamicLevelConfig, Awake, etc) se mantiene igual ...
+        
         /// <summary>
         /// Genera una configuración de nivel dinámica basada en el nivel aleatorio seleccionado
         /// </summary>
@@ -76,17 +96,12 @@ namespace LevelSystem
             }
             else if (config.isFinalLevel)
             {
-                // 🔹 IMPORTANTE: Verificar el nombre exacto de tu escena final
-                // Usa el nombre que tengas en Build Settings (GameComplete o VictoryScreen)
-                config.finalSceneName = "VictoryScreen";
-                UnityEngine.Debug.Log($"[LevelManager] Nivel final detectado. Escena final: {config.finalSceneName}");
+                config.finalSceneName = "VictoryScreen"; // Asegúrate que coincida con tu Build Settings
             }
 
             // Configuración visual por defecto
             config.levelNameDisplayTime = 3f;
             config.levelNameColor = Color.white;
-
-            UnityEngine.Debug.Log($"[LevelManager] Configuración dinámica generada para {config.levelName}");
 
             return config;
         }
@@ -101,11 +116,12 @@ namespace LevelSystem
 
             _instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Debug extra para verificar al inicio
+            if (levelConfigurations == null) 
+                levelConfigurations = new LevelConfiguration[0];
         }
 
-        /// <summary>
-        /// Carga un nivel aleatorio generado por el LevelRandomizer
-        /// </summary>
         private void LoadRandomizedLevel(int levelIndex)
         {
             if (LevelRandomizer.Instance == null || !LevelRandomizer.Instance.IsGenerated)
@@ -126,20 +142,15 @@ namespace LevelSystem
             StartCoroutine(LoadSceneAsync(sceneName));
         }
 
-        /// <summary>
-        /// Inicia el juego desde el primer nivel
-        /// </summary>
         public void StartGame()
         {
             currentLevelIndex = 0;
 
-            // Iniciar tracking de estadísticas
             if (GameStatsManager.Instance != null)
             {
                 GameStatsManager.Instance.StartTracking();
             }
 
-            // 🔹 NUEVO: Verificar si hay niveles generados aleatoriamente
             if (LevelRandomizer.Instance != null && LevelRandomizer.Instance.IsGenerated)
             {
                 UnityEngine.Debug.Log("[LevelManager] Usando niveles generados aleatoriamente");
@@ -154,9 +165,10 @@ namespace LevelSystem
 
         public void LoadLevel(int levelIndex)
         {
-            if (levelIndex < 0 || levelIndex >= levelConfigurations.Length)
+            // Protección contra array nulo
+            if (levelConfigurations == null || levelIndex < 0 || levelIndex >= levelConfigurations.Length)
             {
-                UnityEngine.Debug.LogError($"[LevelManager] Índice de nivel inválido: {levelIndex}");
+                UnityEngine.Debug.LogError($"[LevelManager] Índice de nivel inválido o configuración vacía: {levelIndex}");
                 return;
             }
 
@@ -168,6 +180,12 @@ namespace LevelSystem
 
             currentLevelIndex = levelIndex;
             LevelConfiguration config = levelConfigurations[levelIndex];
+
+            if (config == null)
+            {
+                UnityEngine.Debug.LogError($"[LevelManager] La configuración en el índice {levelIndex} es NULL");
+                return;
+            }
 
             if (string.IsNullOrEmpty(config.levelSceneName))
             {
@@ -192,7 +210,6 @@ namespace LevelSystem
 
             UnityEngine.Debug.Log($"[LevelManager] Nivel completado: {config.levelName}");
 
-            // 🔹 AGREGADO: Registrar nivel completado ANTES de cambiar de escena
             if (GameStatsManager.Instance != null)
             {
                 GameStatsManager.Instance.RegisterLevelCompleted(config.levelNumber);
@@ -202,7 +219,6 @@ namespace LevelSystem
             {
                 UnityEngine.Debug.Log($"[LevelManager] ¡Nivel final completado! Cargando escena final: {config.finalSceneName}");
 
-                // Verificar que el nombre de la escena no esté vacío
                 if (string.IsNullOrEmpty(config.finalSceneName))
                 {
                     UnityEngine.Debug.LogError("[LevelManager] ERROR: finalSceneName está vacío!");
@@ -226,14 +242,10 @@ namespace LevelSystem
             }
         }
 
-        /// <summary>
-        /// Carga el siguiente nivel en la secuencia
-        /// </summary>
         public void LoadNextLevel()
         {
             currentLevelIndex++;
 
-            // 🔹 MODIFICADO: Verificar si usamos niveles aleatorios
             if (LevelRandomizer.Instance != null && LevelRandomizer.Instance.IsGenerated)
             {
                 if (currentLevelIndex < LevelRandomizer.Instance.GetTotalLevels())
@@ -248,15 +260,15 @@ namespace LevelSystem
             }
             else
             {
-                // Usar el sistema tradicional
-                if (currentLevelIndex < levelConfigurations.Length)
+                // Check de seguridad para el array
+                if (levelConfigurations != null && currentLevelIndex < levelConfigurations.Length)
                 {
                     UnityEngine.Debug.Log($"[LevelManager] Avanzando al siguiente nivel: {CurrentLevelConfig.levelName}");
                     LoadLevel(currentLevelIndex);
                 }
                 else
                 {
-                    UnityEngine.Debug.LogWarning("[LevelManager] No hay más niveles configurados");
+                    UnityEngine.Debug.LogWarning("[LevelManager] No hay más niveles configurados o el array es nulo");
                 }
             }
         }
@@ -266,6 +278,13 @@ namespace LevelSystem
             isLoadingScene = true;
 
             UnityEngine.AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+            if (asyncLoad == null)
+            {
+                 UnityEngine.Debug.LogError($"[LevelManager] Error fatal: No se pudo cargar la escena '{sceneName}'. ¿Está en el Build Settings?");
+                 isLoadingScene = false;
+                 yield break;
+            }
+
             asyncLoad.allowSceneActivation = false;
 
             while (asyncLoad.progress < 0.9f)
