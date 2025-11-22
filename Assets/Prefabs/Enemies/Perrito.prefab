@@ -478,7 +478,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0.7
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -532,7 +532,7 @@ MonoBehaviour:
   jumpForce: 2.5
   jumpInterval: 1
   checkRadius: 0.9
-  partnerPrefab: {fileID: 7286695067286737362}
+  attackWaitTime: 3
 --- !u!95 &7889685739329837715
 Animator:
   serializedVersion: 7
