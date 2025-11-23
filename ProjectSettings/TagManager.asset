@@ -45,5 +45,11 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Spawner
+    uniqueID: 3509234679
+    locked: 0
+  - name: Personajes
+    uniqueID: 3681665587
+    locked: 0
   m_RenderingLayers:
   - Default

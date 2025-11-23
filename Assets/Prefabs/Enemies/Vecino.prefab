@@ -215,8 +215,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -613301709
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 48cbbe3e359b393409e2fc55a3214e44, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -339,17 +339,17 @@ MonoBehaviour:
   maxHealth: 3
   moveSpeed: 0.8
   player: {fileID: 0}
-  vecinoPrefab: {fileID: 5038250446558785672}
-  detectionRadius: 1
+  healthSlider: {fileID: 4174852050976291813}
+  attackDistance: 3
   contactDamage: 2
-  attackWaitTime: 3
   baseScale: 1
   ledgeCheck: {fileID: 8476779767968671030}
   checkDistance: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  healthSlider: {fileID: 4174852050976291813}
+  vecinoPrefab: {fileID: 5038250446558785672}
+  attackWaitTime: 3
 --- !u!1 &5789044217862882921
 GameObject:
   m_ObjectHideFlags: 0

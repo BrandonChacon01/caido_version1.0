@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // Hereda de la nueva clase base 'BaseEnemyAI'
+// Asegúrate de agregar un componente AudioSource al objeto del perro en Unity
+[RequireComponent(typeof(AudioSource))] 
 public class PerroAI : BaseEnemyAI
 {
     [Header("Ataque Específico (Perro)")]
@@ -15,25 +17,32 @@ public class PerroAI : BaseEnemyAI
     [Tooltip("Tiempo de cooldown después de un ataque por contacto.")]
     [SerializeField] private float attackWaitTime = 3f;
 
+    // --- NUEVO: Variables de Audio ---
+    [Header("Efectos de Sonido")]
+    [SerializeField] private AudioClip attackSound; // Arrastra el sonido de mordida/ataque aquí
+    [SerializeField] private AudioClip hurtSound;   // Arrastra el sonido de herido aquí
+    private AudioSource audioSource;
+
     // Variables de estado para el salto
     private float jumpTimer;
     private bool isGrounded;
 
     // --- MÉTODOS BASE (Sobrescritos) ---
 
-    // Prepara el temporizador de salto
+    // Prepara el temporizador de salto y obtiene el AudioSource
     protected override void Start()
     {
         base.Start();
         jumpTimer = jumpInterval;
+        
+        // --- NUEVO: Obtener referencia al AudioSource ---
+        audioSource = GetComponent<AudioSource>();
     }
     
     // Sobrescribimos 'HandleChase': le decimos que se mueva Y que salte
     protected override void HandleChase()
     {
-        // --- ¡AQUÍ ESTÁ EL ARREGLO! ---
-        // En lugar de llamar a la base (que es abstracta y no tiene código),
-        // implementamos la lógica de persecución aquí mismo.
+        // Implementamos la lógica de persecución aquí mismo.
         currentMoveDirection = Mathf.Sign(directionToPlayer.x);
         
         HandleJumping();    // Llama a la lógica de salto del perro
@@ -42,14 +51,13 @@ public class PerroAI : BaseEnemyAI
     // Sobrescribimos 'HandleAttack': le decimos que se mueva Y que salte
     protected override void HandleAttack()
     {
-        // --- ¡AQUÍ ESTÁ EL ARREGLO! ---
         // Implementamos la lógica de persecución de nuevo.
         currentMoveDirection = Mathf.Sign(directionToPlayer.x);
 
         HandleJumping();    // Llama a la lógica de salto del perro
     }
 
-    // Sobrescribimos 'OnCollisionEnter2D' para usar nuestro cooldown de ataque
+    // Sobrescribimos 'OnCollisionEnter2D' para usar nuestro cooldown de ataque Y SONIDO
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player") && !isAttacking)
@@ -57,6 +65,12 @@ public class PerroAI : BaseEnemyAI
             PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
             if (playerScript != null)
             {
+                // --- NUEVO: Reproducir sonido de ataque ---
+                if (audioSource != null && attackSound != null)
+                {
+                    audioSource.PlayOneShot(attackSound);
+                }
+
                 // Inicia la corrutina de pausa específica del perro
                 StartCoroutine(AttackPause(playerScript));
             }
@@ -91,9 +105,17 @@ public class PerroAI : BaseEnemyAI
         rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
     }
 
+    // Método Hit modificado para incluir SONIDO DE DAÑO
     public void Hit(float damage)
     {
         base.TakeDamage(damage);
+        
+        // --- NUEVO: Reproducir sonido de herido ---
+        if (audioSource != null && hurtSound != null)
+        {
+            audioSource.PlayOneShot(hurtSound);
+        }
+
         if (healthSlider != null)
         {
             healthSlider.value = currentHealth;

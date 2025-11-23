@@ -22441,12 +22441,20 @@ PrefabInstance:
       value: JefedeJefes
       objectReference: {fileID: 0}
     - target: {fileID: 3488999111560853754, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3488999111560853754, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3488999111560853754, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.53
+      value: -1.62
       objectReference: {fileID: 0}
     - target: {fileID: 3488999111560853754, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3488999111560853754, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -22479,6 +22487,30 @@ PrefabInstance:
     - target: {fileID: 3488999111560853754, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7241793747124197325, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_Size.x
+      value: 0.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7241793747124197325, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_Size.y
+      value: 0.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 7241793747124197325, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3afddb8c445cdbe40889f325cae94c4c, type: 3}
+    - target: {fileID: 7241793747124197325, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9207332179314272650, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9207332179314272650, guid: 76481b48f2c93644f931f11c2f8360dd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

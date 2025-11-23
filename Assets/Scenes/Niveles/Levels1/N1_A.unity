@@ -521,9 +521,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1574453211}
     m_Modifications:
+    - target: {fileID: 296985644671770068, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 892052597856348500, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_Name
       value: EnemySpawner_Vecindad (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 892052597856348500, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4273514094246782937, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_SortingOrder
@@ -1243,9 +1251,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1574453211}
     m_Modifications:
+    - target: {fileID: 296985644671770068, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 892052597856348500, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_Name
       value: EnemySpawner_Vecindad (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 892052597856348500, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4273514094246782937, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_SortingOrder
@@ -19031,6 +19047,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 893783143}
     - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: maxAmmo
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 499194910}
@@ -19244,9 +19264,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1574453211}
     m_Modifications:
+    - target: {fileID: 296985644671770068, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 892052597856348500, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_Name
       value: EnemySpawner_Vecindad
+      objectReference: {fileID: 0}
+    - target: {fileID: 892052597856348500, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4273514094246782937, guid: 20fcfaa7f23229742911bb2322b214f9, type: 3}
       propertyPath: m_SortingOrder
@@ -19373,6 +19401,14 @@ PrefabInstance:
     - target: {fileID: 697325503698813874, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
       propertyPath: m_Name
       value: LevelEndFlag1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: FlagSize.x
+      value: 0.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: FlagSize.y
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
       propertyPath: FlagSprite
