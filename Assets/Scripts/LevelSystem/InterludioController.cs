@@ -1,5 +1,6 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 using System.Collections;
 
@@ -8,7 +9,7 @@ namespace LevelSystem
     public class InterludioController : MonoBehaviour
     {
         [Header("Referencias UI")]
-        [Tooltip("Imagen que se mostrar· en el interludio")]
+        [Tooltip("Imagen que se mostrar√° en el interludio")]
         public UnityEngine.UI.Image interludioImage;
 
         [Tooltip("Texto de instrucciones (ej: 'Presiona ESPACIO para continuar')")]
@@ -18,33 +19,33 @@ namespace LevelSystem
         public GameObject backgroundPanel;
 
         [Header("Audio")]
-        [Tooltip("AudioSource para la m˙sica de fondo del interludio")]
+        [Tooltip("AudioSource para la m√∫sica de fondo del interludio")]
         public AudioSource backgroundMusicSource;
 
-        [Tooltip("Clip de audio que se reproducir· como m˙sica de fondo")]
+        [Tooltip("Clip de audio que se reproducir√° como m√∫sica de fondo")]
         public AudioClip backgroundMusicClip;
 
-        [Tooltip("Volumen de la m˙sica de fondo (0-1)")]
+        [Tooltip("Volumen de la m√∫sica de fondo (0-1)")]
         [Range(0f, 1f)]
         public float musicVolume = 0.5f;
 
-        [Tooltip("øReproducir la m˙sica en loop?")]
+        [Tooltip("¬øReproducir la m√∫sica en loop?")]
         public bool loopMusic = true;
 
-        [Tooltip("DuraciÛn del fade in de la m˙sica (segundos)")]
+        [Tooltip("Duraci√≥n del fade in de la m√∫sica (segundos)")]
         public float musicFadeInDuration = 1f;
 
-        [Tooltip("DuraciÛn del fade out de la m˙sica al salir (segundos)")]
+        [Tooltip("Duraci√≥n del fade out de la m√∫sica al salir (segundos)")]
         public float musicFadeOutDuration = 0.5f;
 
-        [Header("ConfiguraciÛn")]
-        [Tooltip("Sprite/imagen especÌfica para este interludio")]
+        [Header("Configuraci√≥n")]
+        [Tooltip("Sprite/imagen espec√≠fica para este interludio")]
         public Sprite interludioSprite;
 
         [Tooltip("Tecla que el jugador debe presionar para continuar")]
         public KeyCode continueKey = KeyCode.Space;
 
-        [Tooltip("Tiempo mÌnimo antes de poder continuar (en segundos)")]
+        [Tooltip("Tiempo m√≠nimo antes de poder continuar (en segundos)")]
         [Range(0f, 5f)]
         public float minimumDisplayTime = 1f;
 
@@ -52,14 +53,21 @@ namespace LevelSystem
         public string instructionsMessage = "Presiona ESPACIO para continuar";
 
         [Header("Efectos Visuales")]
-        [Tooltip("DuraciÛn del fade in al inicio (segundos)")]
+        [Tooltip("Duraci√≥n del fade in al inicio (segundos)")]
         public float fadeInDuration = 0.5f;
 
-        [Tooltip("øHacer parpadear el texto de instrucciones?")]
+        [Tooltip("¬øHacer parpadear el texto de instrucciones?")]
         public bool blinkInstructionText = true;
 
         [Tooltip("Velocidad del parpadeo")]
         public float blinkSpeed = 1f;
+
+        [Header("üîπ NUEVO: Configuraci√≥n Final")]
+        [Tooltip("¬øEs este el interludio final del juego?")]
+        public bool isFinalInterludio = false;
+
+        [Tooltip("Escena a la que ir si es el interludio final (ej: MainMenu)")]
+        public string finalSceneName = "MainMenu";
 
         private bool canContinue = false;
         private bool isTransitioning = false;
@@ -74,13 +82,13 @@ namespace LevelSystem
             // Verificar si el jugador presiona la tecla para continuar
             if (canContinue && !isTransitioning && Input.GetKeyDown(continueKey))
             {
-                ContinueToNextLevel();
+                ContinueToNext();
             }
         }
 
         private void InitializeInterludio()
         {
-            UnityEngine.Debug.Log("[InterludioController] Inicializando interludio");
+            UnityEngine.Debug.Log($"[InterludioController] Inicializando interludio {(isFinalInterludio ? "(FINAL)" : "")}");
 
             // Configurar la imagen del interludio
             if (interludioImage != null && interludioSprite != null)
@@ -99,7 +107,7 @@ namespace LevelSystem
                 }
             }
 
-            // Iniciar m˙sica de fondo
+            // Iniciar m√∫sica de fondo
             InitializeBackgroundMusic();
 
             // Iniciar la secuencia de interludio
@@ -110,13 +118,13 @@ namespace LevelSystem
         {
             if (backgroundMusicSource == null)
             {
-                UnityEngine.Debug.LogWarning("[InterludioController] No hay AudioSource asignado para la m˙sica de fondo");
+                UnityEngine.Debug.LogWarning("[InterludioController] No hay AudioSource asignado para la m√∫sica de fondo");
                 return;
             }
 
             if (backgroundMusicClip == null)
             {
-                UnityEngine.Debug.LogWarning("[InterludioController] No hay AudioClip asignado para la m˙sica de fondo");
+                UnityEngine.Debug.LogWarning("[InterludioController] No hay AudioClip asignado para la m√∫sica de fondo");
                 return;
             }
 
@@ -125,13 +133,13 @@ namespace LevelSystem
             backgroundMusicSource.loop = loopMusic;
             backgroundMusicSource.volume = 0f; // Empezar en volumen 0 para el fade in
 
-            // Reproducir m˙sica
+            // Reproducir m√∫sica
             backgroundMusicSource.Play();
 
             // Iniciar fade in
             StartCoroutine(FadeInMusic(backgroundMusicSource, musicVolume, musicFadeInDuration));
 
-            UnityEngine.Debug.Log($"[InterludioController] M˙sica de fondo iniciada: {backgroundMusicClip.name}");
+            UnityEngine.Debug.Log($"[InterludioController] M√∫sica de fondo iniciada: {backgroundMusicClip.name}");
         }
 
         private IEnumerator FadeInMusic(AudioSource audioSource, float targetVolume, float duration)
@@ -173,42 +181,112 @@ namespace LevelSystem
                 yield return StartCoroutine(FadeImage(interludioImage, 0f, 1f, fadeInDuration));
             }
 
-            // Esperar el tiempo mÌnimo de visualizaciÛn
+            // Esperar el tiempo m√≠nimo de visualizaci√≥n
             yield return new WaitForSeconds(minimumDisplayTime);
 
-            // Permitir que el jugador contin˙e
+            // Permitir que el jugador contin√∫e
             canContinue = true;
             UnityEngine.Debug.Log("[InterludioController] Listo para continuar - Presiona " + continueKey);
         }
 
-        private void ContinueToNextLevel()
+        /// <summary>
+        /// üîπ MODIFICADO: Decide si cargar el siguiente nivel o ir al MainMenu
+        /// </summary>
+        private void ContinueToNext()
         {
             if (isTransitioning) return;
 
             isTransitioning = true;
             canContinue = false;
 
-            UnityEngine.Debug.Log("[InterludioController] Continuando al siguiente nivel...");
-
-            // Detener m˙sica con fade out antes de cargar el siguiente nivel
-            if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+            if (isFinalInterludio)
             {
-                StartCoroutine(FadeOutAndLoadNextLevel());
+                UnityEngine.Debug.Log("[InterludioController] üéâ Interludio FINAL - Volviendo al MainMenu");
+
+                // Detener m√∫sica con fade out antes de ir al MainMenu
+                if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+                {
+                    StartCoroutine(FadeOutAndLoadMainMenu());
+                }
+                else
+                {
+                    LoadMainMenu();
+                }
             }
             else
             {
-                // Si no hay m˙sica, cargar directamente
-                LevelManager.Instance.LoadNextLevel();
+                UnityEngine.Debug.Log("[InterludioController] Continuando al siguiente nivel...");
+
+                // Detener m√∫sica con fade out antes de cargar el siguiente nivel
+                if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+                {
+                    StartCoroutine(FadeOutAndLoadNextLevel());
+                }
+                else
+                {
+                    LoadNextLevel();
+                }
             }
         }
 
+        /// <summary>
+        /// üîπ NUEVO: Fade out de m√∫sica y cargar MainMenu
+        /// </summary>
+        private IEnumerator FadeOutAndLoadMainMenu()
+        {
+            // Hacer fade out de la m√∫sica
+            yield return StartCoroutine(FadeOutMusic(backgroundMusicSource, musicFadeOutDuration));
+
+            // Cargar MainMenu
+            LoadMainMenu();
+        }
+
+        /// <summary>
+        /// üîπ NUEVO: Cargar la escena del MainMenu
+        /// </summary>
+        private void LoadMainMenu()
+        {
+            // Limpiar datos de la run si es necesario
+            if (GameStatsManager.Instance != null)
+            {
+                UnityEngine.Debug.Log("[InterludioController] Limpiando estad√≠sticas de la run completada");
+                // Opcional: Puedes mantener las stats o limpiarlas
+                // GameStatsManager.Instance.ResetStats();
+            }
+
+            // üîπ MODIFICADO: Limpiar payload manualmente
+            LoadingPayload.NextScene = "";
+            LoadingPayload.UseLevelSystem = false;
+
+            UnityEngine.Debug.Log($"[InterludioController] üè† Cargando escena: {finalSceneName}");
+            SceneManager.LoadScene(finalSceneName);
+        }
+
+        /// <summary>
+        /// Fade out de m√∫sica y cargar el siguiente nivel
+        /// </summary>
         private IEnumerator FadeOutAndLoadNextLevel()
         {
-            // Hacer fade out de la m˙sica
+            // Hacer fade out de la m√∫sica
             yield return StartCoroutine(FadeOutMusic(backgroundMusicSource, musicFadeOutDuration));
 
             // Cargar el siguiente nivel
-            LevelManager.Instance.LoadNextLevel();
+            LoadNextLevel();
+        }
+
+        /// <summary>
+        /// Cargar el siguiente nivel usando el LevelManager
+        /// </summary>
+        private void LoadNextLevel()
+        {
+            if (LevelManager.Instance != null)
+            {
+                LevelManager.Instance.LoadNextLevel();
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("[InterludioController] LevelManager no encontrado. No se puede cargar el siguiente nivel.");
+            }
         }
 
         private IEnumerator FadeImage(UnityEngine.UI.Image image, float startAlpha, float endAlpha, float duration)
@@ -268,7 +346,7 @@ namespace LevelSystem
             if (Application.isPlaying)
             {
                 canContinue = true;
-                ContinueToNextLevel();
+                ContinueToNext();
             }
             else
             {

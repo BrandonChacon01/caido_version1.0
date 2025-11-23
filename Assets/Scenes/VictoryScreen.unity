@@ -1230,7 +1230,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1251.9158, y: 79.6006}
+  m_SizeDelta: {x: 999.0007, y: 54.15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1746647245
 MonoBehaviour:
@@ -1451,7 +1451,7 @@ MonoBehaviour:
   titleText: {fileID: 894859156}
   timeText: {fileID: 1746647246}
   jumpsText: {fileID: 67127459}
-  mainMenuSceneName: MainMenu
+  mainMenuSceneName: InterludioFinal
   animateTitle: 1
   titleScalePulse: 1.1
   pulseSpeed: 1
