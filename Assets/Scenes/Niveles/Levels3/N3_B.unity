@@ -19264,6 +19264,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: dd370f1058e83aa45b699f39f3b7ee9c, type: 3}
     - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: FlagColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: FlagColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: FlagColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
       propertyPath: CompletionSound
       value: 
       objectReference: {fileID: 8300000, guid: 6060b890b9de6b94e88bcb277c9f332c, type: 3}
@@ -19367,6 +19379,18 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: dd370f1058e83aa45b699f39f3b7ee9c, type: 3}
+    - target: {fileID: 8582344308668206927, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8582344308668206927, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8582344308668206927, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8582344308668206927, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
