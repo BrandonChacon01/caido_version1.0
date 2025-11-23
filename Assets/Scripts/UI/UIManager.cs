@@ -16,6 +16,10 @@ public class UIManager : MonoBehaviour
     [Tooltip("Texto que muestra el tiempo transcurrido en Game Over")]
     public TextMeshProUGUI runTimeText;
 
+    [Header("Scene Names")]
+    [Tooltip("Nombre de la escena del menú principal")]
+    public string mainMenuSceneName = "MainMenu";
+
     private LevelTimer levelTimer;
     private PauseMenuController pauseMenuController;
 
@@ -99,14 +103,25 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Vuelve al menú principal
+    /// Vuelve al menú principal (método principal con logs de prueba)
+    /// </summary>
+    public void GoToMainMenu()
+    {
+        Debug.Log("[UIManager] GoToMainMenu() llamado DESDE Game Over");
+
+        // Forzar reanudación antes de cambiar de escena
+        PauseManager.Instance.ForceResume();
+        Debug.Log("[UIManager] ForceResume() OK, cargando escena " + mainMenuSceneName);
+
+        SceneManager.LoadScene(mainMenuSceneName);
+    }
+
+    /// <summary>
+    /// Vuelve al menú principal (alias para compatibilidad con referencias antiguas)
     /// </summary>
     public void VolverAlMenuPrincipal()
     {
-        // 🔹 NUEVO: Forzar reanudación antes de cambiar de escena
-        PauseManager.Instance.ForceResume();
-
-        SceneManager.LoadScene("MainMenu");
+        GoToMainMenu();
     }
 
     /// <summary>
