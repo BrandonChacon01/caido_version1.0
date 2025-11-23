@@ -11,7 +11,7 @@ public class MultiEnemySpawner : MonoBehaviour
     [SerializeField] private int maxEnemies = 5; 
     [SerializeField] private float activationDistance = 20f; 
     [Tooltip("Punto específico donde aparecerán los enemigos.")]
-    [SerializeField] private Transform spawnPoint; // --- NUEVO ---
+    [SerializeField] private Transform spawnPoint; 
 
     private Transform playerTransform;
     
@@ -79,46 +79,56 @@ public class MultiEnemySpawner : MonoBehaviour
             return;
         }
 
-        // --- LÓGICA MODIFICADA ---
-        // Determina la posición de spawn: si spawnPoint está asignado, úsalo. Si no, usa el propio spawner.
-        Vector3 spawnPosition = (spawnPoint != null) ? spawnPoint.position : transform.position;
+        // Determina la posición base de spawn
+        Vector3 baseSpawnPosition = (spawnPoint != null) ? spawnPoint.position : transform.position;
 
         int index = Random.Range(0, enemyPrefabs.Length);
         GameObject prefabToSpawn = enemyPrefabs[index];
 
-        // Usa la posición determinada para instanciar
-        GameObject newEnemy = Instantiate(prefabToSpawn, spawnPosition, Quaternion.identity);
+        // --- LÓGICA MODIFICADA: Jauría de Perros ---
+        // Verificamos si el prefab elegido es un Perro
+        bool isDog = prefabToSpawn.GetComponent<PerroAI>() != null;
+        
+        // Si es perro, saldrán 2. Si no, 1.
+        int countToSpawn = isDog ? 2 : 1;
 
-        spawnedEnemies.Add(newEnemy);
-
-        // Asignación de la referencia del jugador
-        CharacterStats enemyStats = newEnemy.GetComponent<CharacterStats>();
-        if (enemyStats != null)
+        for (int i = 0; i < countToSpawn; i++)
         {
-            if (enemyStats is PerroAI perro) perro.player = playerTransform;
-            else if (enemyStats is CholitoAI cholito) cholito.player = playerTransform;
-            else if (enemyStats is VecinoAI vecino) vecino.player = playerTransform;
-            else if (enemyStats is TaqueroAI taquero) taquero.player = playerTransform;
-            else if (enemyStats is AlbanilAI albanil) albanil.player = playerTransform;
-            else if (enemyStats is EloteroAI elotero) elotero.player = playerTransform;
+            // Si vamos a spawnear más de 1, les damos un pequeño desplazamiento
+            // para que no salgan pegados. (Ej. El segundo sale 1 metro a la derecha)
+            Vector3 currentPos = baseSpawnPosition;
+            if (i > 0) currentPos.x += 1.0f; 
+
+            // Instanciar y Registrar
+            GameObject newEnemy = Instantiate(prefabToSpawn, currentPos, Quaternion.identity);
+            spawnedEnemies.Add(newEnemy);
+
+            // Configuración de IA
+            CharacterStats enemyStats = newEnemy.GetComponent<CharacterStats>();
+            if (enemyStats != null)
+            {
+                if (enemyStats is PerroAI perro) perro.player = playerTransform;
+                else if (enemyStats is CholitoAI cholito) cholito.player = playerTransform;
+                else if (enemyStats is VecinoAI vecino) vecino.player = playerTransform;
+                else if (enemyStats is TaqueroAI taquero) taquero.player = playerTransform;
+                else if (enemyStats is AlbanilAI albanil) albanil.player = playerTransform;
+                else if (enemyStats is EloteroAI elotero) elotero.player = playerTransform;
+            }
         }
     }
 
     // Dibuja el radio de activación y el punto de spawn
     private void OnDrawGizmosSelected()
     {
-        // Dibuja el radio de activación (verde)
         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
         Gizmos.DrawSphere(transform.position, activationDistance);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, activationDistance);
 
-        // --- NUEVO ---
-        // Dibuja el punto de spawn elegido (en azul)
         if (spawnPoint != null)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(spawnPoint.position, 0.1f); // Dibuja una esfera en el punto
+            Gizmos.DrawSphere(spawnPoint.position, 0.1f); 
             Gizmos.color = new Color(0f, 0f, 1f, 0.7f);
             Gizmos.DrawWireSphere(spawnPoint.position, 0.1f);
         }
