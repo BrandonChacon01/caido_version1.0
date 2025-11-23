@@ -268,8 +268,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280260646
-  m_fontColor: {r: 0.14767408, g: 0.5943396, b: 0.12055002, a: 1}
+    rgba: 4278648998
+  m_fontColor: {r: 0.6528301, g: 0, b: 0.02745112, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -362,7 +362,13 @@ MonoBehaviour:
   interludioImage: {fileID: 2000989387}
   instructionText: {fileID: 445780633}
   backgroundPanel: {fileID: 59690665}
-  interludioSprite: {fileID: -4831533077221465653, guid: c6b1bd1e4d1030143ba05736eb612993, type: 3}
+  backgroundMusicSource: {fileID: 0}
+  backgroundMusicClip: {fileID: 0}
+  musicVolume: 0.5
+  loopMusic: 1
+  musicFadeInDuration: 1
+  musicFadeOutDuration: 0.5
+  interludioSprite: {fileID: 2606638449613041140, guid: 9bd3f0b32bc7b074dabe2e6d75d499ab, type: 3}
   continueKey: 32
   minimumDisplayTime: 1
   instructionsMessage: Presiona la tecla "ESPACIO" para continuar
@@ -713,7 +719,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4831533077221465653, guid: c6b1bd1e4d1030143ba05736eb612993, type: 3}
+  m_Sprite: {fileID: 2606638449613041140, guid: 9bd3f0b32bc7b074dabe2e6d75d499ab, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

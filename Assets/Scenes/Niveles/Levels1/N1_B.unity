@@ -18842,6 +18842,7 @@ MonoBehaviour:
   HealthBar: {fileID: 499194909}
   HeatBar: {fileID: 893783141}
   runTimeText: {fileID: 668322932130089718}
+  mainMenuSceneName: MainMenu
 --- !u!4 &822051958
 Transform:
   m_ObjectHideFlags: 0
@@ -21304,7 +21305,7 @@ PrefabInstance:
       objectReference: {fileID: 822051957}
     - target: {fileID: 8300679294201952717, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: VolverAlMenuPrincipal
+      value: GoToMainMenu
       objectReference: {fileID: 0}
     - target: {fileID: 8300679294201952717, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

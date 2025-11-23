@@ -171,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EloteBomba
   moveSpeed: 1.2
   explosionVFXPrefab: {fileID: 4082561797664461821, guid: 5f9e64b1da0907e459e0a1bfb7d9ef12, type: 3}
+  explosionSound: {fileID: 8300000, guid: 637faf18387fb024cb5c81c31c35a5c4, type: 3}
 --- !u!114 &-5438799310635826137
 MonoBehaviour:
   m_ObjectHideFlags: 0

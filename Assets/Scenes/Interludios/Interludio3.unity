@@ -228,7 +228,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.05137037}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 11, y: -145}
+  m_AnchoredPosition: {x: 50, y: -145}
   m_SizeDelta: {x: 800, y: -490}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &445780632
@@ -268,8 +268,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4280260646
-  m_fontColor: {r: 0.14767408, g: 0.5943396, b: 0.12055002, a: 1}
+    rgba: 4282056664
+  m_fontColor: {r: 0.84705883, g: 1, b: 0.22745098, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -362,7 +362,13 @@ MonoBehaviour:
   interludioImage: {fileID: 2000989387}
   instructionText: {fileID: 445780633}
   backgroundPanel: {fileID: 59690665}
-  interludioSprite: {fileID: 2184242850611627707, guid: 7469566ad1c49414498f685551e19146, type: 3}
+  backgroundMusicSource: {fileID: 0}
+  backgroundMusicClip: {fileID: 0}
+  musicVolume: 0.5
+  loopMusic: 1
+  musicFadeInDuration: 1
+  musicFadeOutDuration: 0.5
+  interludioSprite: {fileID: 5875772427752825470, guid: 27395594b8cb3ba43b4cb3ab11bbdf20, type: 3}
   continueKey: 32
   minimumDisplayTime: 1
   instructionsMessage: Presiona la tecla "ESPACIO" para continuar
@@ -713,7 +719,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2184242850611627707, guid: 7469566ad1c49414498f685551e19146, type: 3}
+  m_Sprite: {fileID: 5875772427752825470, guid: 27395594b8cb3ba43b4cb3ab11bbdf20, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
