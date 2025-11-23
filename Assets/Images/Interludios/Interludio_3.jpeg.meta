@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7fd7785fa9104874493bafa6286fcc46
+guid: 27395594b8cb3ba43b4cb3ab11bbdf20
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9151541314891179710
-    second: interludio4_0
+      213: 5875772427752825470
+    second: Interludio_3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: interludio4_0
+      name: Interludio_3_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1920
-        height: 1080
+        width: 1599
+        height: 899
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 249999a39a13ff080800000000000000
-      internalID: -9151541314891179710
+      spriteID: e72ed3154efea8150800000000000000
+      internalID: 5875772427752825470
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      interludio4_0: -9151541314891179710
+      Interludio_3_0: 5875772427752825470
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
