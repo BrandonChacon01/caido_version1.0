@@ -1,17 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
     [Header("Stats Universales")]
     public float maxHealth = 10f;
-    public float moveSpeed = 1f; // 'Speed' del jugador, 'moveSpeed' de enemigos
+    public float moveSpeed = 1f;
 
-    // 'protected' significa que esta clase y sus 'hijos' (PlayerController) pueden verlas
     protected float currentHealth;
     protected Rigidbody2D rb;
     protected Animator anim;
 
-    // Usamos 'virtual' para que las clases 'hijo' puedan sobreescribir esta función
+    // ðŸ”¹ AGREGADO: virtual para que las clases hijas puedan hacer override
     protected virtual void Awake()
     {
         // Obtenemos los componentes universales
@@ -21,11 +20,10 @@ public class CharacterStats : MonoBehaviour
 
     protected virtual void Start()
     {
-        // Todos los personajes empiezan con la vida al máximo
+        // Todos los personajes empiezan con la vida al mÃ¡ximo
         currentHealth = maxHealth;
     }
 
-    // Un método universal para recibir daño
     public virtual void TakeDamage(float damage)
     {
         currentHealth -= damage;
@@ -36,21 +34,18 @@ public class CharacterStats : MonoBehaviour
         }
     }
 
-    // Un método universal para curar
     public virtual void Heal(float amount)
     {
         currentHealth += amount;
-        Debug.Log(gameObject.name + " recibió " + amount + " de daño. Vida restante: " + currentHealth);
+        Debug.Log(gameObject.name + " recibiÃ³ " + amount + " de daÃ±o. Vida restante: " + currentHealth);
         if (currentHealth > maxHealth)
         {
             currentHealth = maxHealth;
         }
     }
 
-    // Un método universal para morir
     protected virtual void Die()
     {
-        // La acción de morir base es solo destruirse
         Debug.Log(gameObject.name + " ha muerto.");
         Destroy(gameObject);
     }
