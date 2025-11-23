@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1780545246393096032}
   - component: {fileID: 178646500559455024}
   - component: {fileID: 42361972972799704}
+  - component: {fileID: 2611076961561898633}
   m_Layer: 0
   m_Name: BolsitaHielos
   m_TagString: Untagged
@@ -105,7 +106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e1d8325b71620429e6a58e4c7ab995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BolsitaHielos
-  vidaQueRecupera: 1
+  vidaQueRecupera: 10
 --- !u!58 &178646500559455024
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -169,3 +170,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2611076961561898633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4001377872378432191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43ecfaab62d3e3d47826a8ac46d9bf91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemFloat
+  amplitud: 0.03
+  velocidad: 2

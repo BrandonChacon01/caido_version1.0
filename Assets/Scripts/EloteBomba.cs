@@ -2,15 +2,20 @@ using UnityEngine;
 
 public class EloteBomba : MonoBehaviour
 {
+    [Header("Configuraci√≥n de Movimiento")]
     [SerializeField] private float moveSpeed = 8f;
+    
+    [Header("Efectos Visuales y Sonoros")]
     [SerializeField] private GameObject explosionVFXPrefab; // Opcional: para un efecto visual
+    [Tooltip("Sonido al explotar")]
+    [SerializeField] private AudioClip explosionSound; // --- NUEVO ---
 
     private Vector2 targetPosition;
     private float explosionRadius;
     private float damage;
     private bool isInitialized = false;
 
-    // El EloteroAI llamar· a este mÈtodo para configurar la bomba
+    // El EloteroAI llamar√° a este m√©todo para configurar la bomba
     public void Initialize(Vector2 target, float radius, float dmg)
     {
         this.targetPosition = target;
@@ -23,7 +28,7 @@ public class EloteBomba : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        // Mueve el proyectil hacia la posiciÛn objetivo
+        // Mueve el proyectil hacia la posici√≥n objetivo
         transform.position = Vector2.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 
         // Si llega al objetivo (o muy cerca), explota
@@ -35,18 +40,25 @@ public class EloteBomba : MonoBehaviour
 
     private void Explode()
     {
-        // Opcional: Instancia un efecto visual de explosiÛn
+        // 1. Efecto Visual
         if (explosionVFXPrefab != null)
         {
             Instantiate(explosionVFXPrefab, transform.position, Quaternion.identity);
         }
 
-        // Detecta todos los colliders dentro del radio de explosiÛn
+        // 2. --- NUEVO: Efecto de Sonido ---
+        if (explosionSound != null)
+        {
+            // Reproduce el sonido en el lugar de la explosi√≥n antes de destruir el objeto
+            AudioSource.PlayClipAtPoint(explosionSound, transform.position);
+        }
+
+        // 3. Detecta todos los colliders dentro del radio de explosi√≥n
         Collider2D[] objectsInRange = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
 
         foreach (Collider2D col in objectsInRange)
         {
-            // Si encuentra al jugador, le hace daÒo
+            // Si encuentra al jugador, le hace da√±o
             if (col.CompareTag("Player"))
             {
                 PlayerController player = col.GetComponent<PlayerController>();
@@ -54,17 +66,16 @@ public class EloteBomba : MonoBehaviour
                 {
                     player.Hit(damage);
                 }
-                // Rompemos el bucle si solo quieres que daÒe al jugador una vez
-                // por si tienes m˙ltiples colliders en el jugador.
+                // Rompemos el bucle si solo quieres que da√±e al jugador una vez
                 break;
             }
         }
 
-        // Destruye el proyectil
+        // 4. Destruye el proyectil
         Destroy(gameObject);
     }
 
-    // Dibuja el radio de la explosiÛn en el editor para que sea f·cil de ver
+    // Dibuja el radio de la explosi√≥n en el editor para que sea f√°cil de ver
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;

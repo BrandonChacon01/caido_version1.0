@@ -107,6 +107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SlashDamage
   damage: 4
   lifeTime: 0.3
+  hitSound: {fileID: 8300000, guid: 637faf18387fb024cb5c81c31c35a5c4, type: 3}
 --- !u!61 &7931584950373285750
 BoxCollider2D:
   m_ObjectHideFlags: 0

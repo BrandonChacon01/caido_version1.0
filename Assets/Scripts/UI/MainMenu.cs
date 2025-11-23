@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
+using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
@@ -15,6 +15,26 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private bool useVideoIntro = true; // Toggle para usar video o ir directo
     [SerializeField] private bool useLevelSystem = true; // Usar el sistema de niveles
 
+    [Header("Audio")]
+    [Tooltip("AudioSource para la música de fondo del menú")]
+    [SerializeField] private AudioSource backgroundMusicSource;
+
+    [Tooltip("Clip de audio que se reproducirá como música de fondo")]
+    [SerializeField] private AudioClip backgroundMusicClip;
+
+    [Tooltip("Volumen de la música de fondo (0-1)")]
+    [Range(0f, 1f)]
+    [SerializeField] private float musicVolume = 0.5f;
+
+    [Tooltip("¿Reproducir la música en loop?")]
+    [SerializeField] private bool loopMusic = true;
+
+    [Tooltip("Duración del fade in de la música (segundos)")]
+    [SerializeField] private float musicFadeInDuration = 1.5f;
+
+    [Tooltip("Duración del fade out al salir del menú (segundos)")]
+    [SerializeField] private float musicFadeOutDuration = 1f;
+
     [Header("Panels")]
     [SerializeField] private GameObject panelMain;
     [SerializeField] private GameObject panelOptions;
@@ -24,6 +44,8 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button btnOptions;
     [SerializeField] private Button btnQuit;
     [SerializeField] private Button btnBackFromOptions;
+
+    private bool isTransitioning = false;
 
     private void Awake()
     {
@@ -51,8 +73,90 @@ public class MainMenu : MonoBehaviour
             UnityEngine.Debug.Log("[MainMenu] Estadísticas reseteadas");
         }
 
-        // 🔹 NUEVO: Verificar si hay sesión iniciada
+        // Verificar si hay sesión iniciada
         CheckAuthenticationStatus();
+
+        // Iniciar música de fondo
+        InitializeBackgroundMusic();
+    }
+
+    /// <summary>
+    /// Inicializa y reproduce la música de fondo del menú
+    /// </summary>
+    private void InitializeBackgroundMusic()
+    {
+        if (backgroundMusicSource == null)
+        {
+            UnityEngine.Debug.LogWarning("[MainMenu] No hay AudioSource asignado para la música de fondo");
+            return;
+        }
+
+        if (backgroundMusicClip == null)
+        {
+            UnityEngine.Debug.LogWarning("[MainMenu] No hay AudioClip asignado para la música de fondo");
+            return;
+        }
+
+        // Configurar el AudioSource
+        backgroundMusicSource.clip = backgroundMusicClip;
+        backgroundMusicSource.loop = loopMusic;
+        backgroundMusicSource.volume = 0f; // Empezar en volumen 0 para el fade in
+
+        // Reproducir música
+        backgroundMusicSource.Play();
+
+        // Iniciar fade in
+        StartCoroutine(FadeInMusic(backgroundMusicSource, musicVolume, musicFadeInDuration));
+
+        UnityEngine.Debug.Log($"[MainMenu] Música de fondo iniciada: {backgroundMusicClip.name}");
+    }
+
+    /// <summary>
+    /// Fade in de la música
+    /// </summary>
+    private IEnumerator FadeInMusic(AudioSource audioSource, float targetVolume, float duration)
+    {
+        float elapsedTime = 0f;
+        float startVolume = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(startVolume, targetVolume, elapsedTime / duration);
+            yield return null;
+        }
+
+        audioSource.volume = targetVolume;
+    }
+
+    /// <summary>
+    /// Fade out de la música
+    /// </summary>
+    private IEnumerator FadeOutMusic(AudioSource audioSource, float duration)
+    {
+        float elapsedTime = 0f;
+        float startVolume = audioSource.volume;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(startVolume, 0f, elapsedTime / duration);
+            yield return null;
+        }
+
+        audioSource.volume = 0f;
+        audioSource.Stop();
+    }
+
+    /// <summary>
+    /// Detiene la música con fade out
+    /// </summary>
+    private void StopBackgroundMusic()
+    {
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            StartCoroutine(FadeOutMusic(backgroundMusicSource, musicFadeOutDuration));
+        }
     }
 
     /// <summary>
@@ -107,7 +211,10 @@ public class MainMenu : MonoBehaviour
 
     private void OnPlay()
     {
-        // 🔹 MODIFICADO: Verificar y guardar estado de autenticación al dar Play
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        // Verificar y guardar estado de autenticación al dar Play
         CheckAuthenticationStatus();
 
         // Iniciar tracking de estadísticas
@@ -118,6 +225,30 @@ public class MainMenu : MonoBehaviour
             UnityEngine.Debug.Log("[MainMenu] Tracking de estadísticas iniciado");
         }
 
+        // Detener música con fade out antes de cambiar de escena
+        StartCoroutine(FadeOutAndLoadGame());
+    }
+
+    /// <summary>
+    /// Hace fade out de la música y luego carga el juego
+    /// </summary>
+    private IEnumerator FadeOutAndLoadGame()
+    {
+        // Hacer fade out de la música
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            yield return StartCoroutine(FadeOutMusic(backgroundMusicSource, musicFadeOutDuration));
+        }
+
+        // Cargar la siguiente escena
+        LoadGameScene();
+    }
+
+    /// <summary>
+    /// Lógica para cargar la escena del juego
+    /// </summary>
+    private void LoadGameScene()
+    {
         // Configurar el sistema de niveles
         if (useLevelSystem && LevelManager.Instance != null)
         {
@@ -163,8 +294,27 @@ public class MainMenu : MonoBehaviour
 
     private void OnQuit()
     {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        // Fade out antes de cerrar
+        StartCoroutine(FadeOutAndQuit());
+    }
+
+    /// <summary>
+    /// Hace fade out y luego cierra la aplicación
+    /// </summary>
+    private IEnumerator FadeOutAndQuit()
+    {
+        // Hacer fade out de la música
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            yield return StartCoroutine(FadeOutMusic(backgroundMusicSource, musicFadeOutDuration));
+        }
+
 #if UNITY_EDITOR
         UnityEngine.Debug.Log("[MainMenu] Salir (en Editor no se cierra).");
+        isTransitioning = false;
 #else
         Application.Quit();
 #endif
@@ -174,12 +324,33 @@ public class MainMenu : MonoBehaviour
     {
         if (panelOptions && panelOptions.activeSelf && Input.GetKeyDown(KeyCode.Escape))
         {
-            ShowMain();
+            ShowOptions();
         }
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Test - Detener Música")]
+    private void TestStopMusic()
+    {
+        if (Application.isPlaying)
+        {
+            StopBackgroundMusic();
+        }
+    }
+
+    [ContextMenu("Test - Reiniciar Música")]
+    private void TestRestartMusic()
+    {
+        if (Application.isPlaying)
+        {
+            StopBackgroundMusic();
+            Invoke(nameof(InitializeBackgroundMusic), musicFadeOutDuration);
+        }
+    }
+#endif
 }
 
-// 🔹 MODIFICADO: Contenedor para pasar datos entre escenas (ahora incluye datos de autenticación)
+// Contenedor para pasar datos entre escenas (ahora incluye datos de autenticación)
 public static class LoadingPayload
 {
     public static string NextScene;

@@ -1,39 +1,26 @@
 using UnityEngine;
 
-public class OldDeathZone : MonoBehaviour
+public class OlDDeathZone : MonoBehaviour
 {
-    // Esta función se activa automáticamente cuando CUALQUIER
+    // Esta funciÃ³n se activa automÃ¡ticamente cuando CUALQUIER
     // otro collider 2D (que tenga un Rigidbody2D) entra en este trigger.
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 1. Revisamos si el objeto que entró es el JUGADOR
-        PlayerMovement player = other.GetComponent<PlayerMovement>();
+        // 1. Revisamos si el objeto que entrÃ³ es el JUGADOR
+        // (Buscamos el nuevo script 'PlayerController')
+        PlayerController player = other.GetComponent<PlayerController>();
         if (player != null)
         {
-            // ¡Es el jugador!
-            // En lugar de destruirlo, llamamos a su método Hit()
-            // con un número de daño muy alto para matarlo al instante.
-            // Esto asegura que se muestre la pantalla de Game Over.
             player.Hit(9999f);
-            return; // Salimos de la función
+            return;
         }
 
-        // 2. Revisamos si el objeto que entró es un ENEMIGO
-        GruntScript enemy = other.GetComponent<GruntScript>();
+        CharacterStats enemy = other.GetComponent<CharacterStats>();
         if (enemy != null)
         {
-            // Es un enemigo. No necesitamos mostrar Game Over,
-            // así que simplemente lo destruimos.
             Destroy(other.gameObject);
-            return; // Salimos de la función
+            return; // Salimos de la funciÃ³n
         }
 
-        // 3. (Opcional) Revisamos si es una BALA
-        BulletScript bullet = other.GetComponent<BulletScript>();
-        if (bullet != null)
-        {
-            // Destruimos la bala para que no se acumulen
-            Destroy(other.gameObject);
-        }
     }
 }

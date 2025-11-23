@@ -3,109 +3,96 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PerroAI : CharacterStats
+// Hereda de la nueva clase base 'BaseEnemyAI'
+// Asegúrate de agregar un componente AudioSource al objeto del perro en Unity
+[RequireComponent(typeof(AudioSource))] 
+public class PerroAI : BaseEnemyAI
 {
-    [Header("Referencias")]
-    public Transform player;
-    [SerializeField] private LayerMask groundLayer;
+    [Header("Ataque Específico (Perro)")]
+    [Tooltip("El punto en los pies para revisar si puede saltar.")]
     [SerializeField] private Transform groundCheck;
-
-    [Header("IA - Configuración")]
-    [SerializeField] private float detectionRadius = 10f;
-    [SerializeField] private float contactDamage = 1f;
-    [SerializeField] private float attackWaitTime = 3f;
-    [SerializeField] private float baseScale = 0.15f;
-
-    [Header("IA - Salto")]
     [SerializeField] private float jumpForce = 2f;
     [SerializeField] private float jumpInterval = 1.5f;
     [SerializeField] private float checkRadius = 0.2f;
+    [Tooltip("Tiempo de cooldown después de un ataque por contacto.")]
+    [SerializeField] private float attackWaitTime = 3f;
+
+    // --- NUEVO: Variables de Audio ---
+    [Header("Efectos de Sonido")]
+    [SerializeField] private AudioClip attackSound; // Arrastra el sonido de mordida/ataque aquí
+    [SerializeField] private AudioClip hurtSound;   // Arrastra el sonido de herido aquí
+    private AudioSource audioSource;
+
+    // Variables de estado para el salto
     private float jumpTimer;
     private bool isGrounded;
 
-    [Header("UI")]
-    [SerializeField] private Slider healthSlider;
+    // --- MÉTODOS BASE (Sobrescritos) ---
 
-    private bool isAttacking = false;
-    private float currentMoveDirection = 0f;
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
+    // Prepara el temporizador de salto y obtiene el AudioSource
     protected override void Start()
     {
         base.Start();
-
-        if (player == null)
-        {
-            try
-            {
-                player = GameObject.FindGameObjectWithTag("Player").transform;
-            }
-            catch
-            {
-                Debug.LogError("PerroAI: No se encontró al jugador. Asegúrate de que el jugador tenga el Tag 'Player'.");
-            }
-        }
-
-        if (healthSlider != null)
-        {
-            healthSlider.maxValue = maxHealth;
-            healthSlider.value = currentHealth;
-        }
-
         jumpTimer = jumpInterval;
+        
+        // --- NUEVO: Obtener referencia al AudioSource ---
+        audioSource = GetComponent<AudioSource>();
+    }
+    
+    // Sobrescribimos 'HandleChase': le decimos que se mueva Y que salte
+    protected override void HandleChase()
+    {
+        // Implementamos la lógica de persecución aquí mismo.
+        currentMoveDirection = Mathf.Sign(directionToPlayer.x);
+        
+        HandleJumping();    // Llama a la lógica de salto del perro
     }
 
-    void Update()
+    // Sobrescribimos 'HandleAttack': le decimos que se mueva Y que salte
+    protected override void HandleAttack()
     {
-        if (player == null) return;
+        // Implementamos la lógica de persecución de nuevo.
+        currentMoveDirection = Mathf.Sign(directionToPlayer.x);
 
-        if (isAttacking)
+        HandleJumping();    // Llama a la lógica de salto del perro
+    }
+
+    // Sobrescribimos 'OnCollisionEnter2D' para usar nuestro cooldown de ataque Y SONIDO
+    protected override void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player") && !isAttacking)
         {
-            currentMoveDirection = 0f;
-            anim.SetBool("isMoving", false);
-            return;
-        }
+            PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
+            if (playerScript != null)
+            {
+                // --- NUEVO: Reproducir sonido de ataque ---
+                if (audioSource != null && attackSound != null)
+                {
+                    audioSource.PlayOneShot(attackSound);
+                }
 
+                // Inicia la corrutina de pausa específica del perro
+                StartCoroutine(AttackPause(playerScript));
+            }
+        }
+    }
+
+    // --- MÉTODOS ESPECIALES (Perro) ---
+
+    // Esta es la lógica de salto única del perro
+    private void HandleJumping()
+    {
+        // Revisa si está en el suelo
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
         if (anim != null) anim.SetBool("isGrounded", isGrounded);
 
-        float distance = Vector2.Distance(transform.position, player.position);
-        Vector3 directionToPlayer = player.position - transform.position;
-
-        if (distance <= detectionRadius)
+        // Temporizador de salto
+        jumpTimer -= Time.deltaTime;
+        if (jumpTimer <= 0 && isGrounded)
         {
-            currentMoveDirection = Mathf.Sign(directionToPlayer.x);
-            anim.SetBool("isMoving", true);
-
-            jumpTimer -= Time.deltaTime;
-            if (jumpTimer <= 0 && isGrounded)
-            {
-                Jump();
-                jumpTimer = jumpInterval;
-            }
-
-            if (directionToPlayer.x > 0.0f)
-            {
-                transform.localScale = new Vector3(baseScale, baseScale, 1);
-            }
-            else
-            {
-                transform.localScale = new Vector3(-baseScale, baseScale, 1);
-            }
+            Jump();
+            jumpTimer = jumpInterval;
         }
-        else
-        {
-            currentMoveDirection = 0f;
-            anim.SetBool("isMoving", false);
-        }
-    }
-
-    void FixedUpdate()
-    {
-        rb.linearVelocity = new Vector2(currentMoveDirection * moveSpeed, rb.linearVelocity.y);
     }
 
     // Aplica la fuerza de salto y activa la animación
@@ -118,10 +105,16 @@ public class PerroAI : CharacterStats
         rb.AddForce(jumpDirection * jumpForce, ForceMode2D.Impulse);
     }
 
-    // Método para recibir daño de las balas del jugador
+    // Método Hit modificado para incluir SONIDO DE DAÑO
     public void Hit(float damage)
     {
         base.TakeDamage(damage);
+        
+        // --- NUEVO: Reproducir sonido de herido ---
+        if (audioSource != null && hurtSound != null)
+        {
+            audioSource.PlayOneShot(hurtSound);
+        }
 
         if (healthSlider != null)
         {
@@ -129,37 +122,21 @@ public class PerroAI : CharacterStats
         }
     }
 
-    // Método para hacer daño por contacto
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player") && !isAttacking)
-        {
-            PlayerController playerScript = collision.gameObject.GetComponent<PlayerController>();
-            if (playerScript != null)
-            {
-                StartCoroutine(AttackPause(playerScript));
-            }
-        }
-    }
-
-    // Corrutina que aplica el daño y la espera
+    // Corrutina de pausa de ataque (usa 'attackWaitTime' de este script)
     private IEnumerator AttackPause(PlayerController playerScript)
     {
         isAttacking = true;
-
         playerScript.Hit(contactDamage);
-
         yield return new WaitForSeconds(attackWaitTime);
-
         isAttacking = false;
     }
 
-    // Dibuja los detectores en el editor
-    private void OnDrawGizmosSelected()
+    // Dibuja los detectores (los de la base + el nuevo 'groundCheck')
+    protected override void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        base.OnDrawGizmosSelected(); // Dibuja el radio de detección y el ledge check
 
+        // Dibuja el detector de suelo para el salto
         if (groundCheck != null)
         {
             Gizmos.color = Color.blue;

@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 public class PlayerController : CharacterStats
 {
-    // --- Variables de Movimiento y Disparo (Espec�ficas del Jugador) ---
+    // --- Variables de Movimiento y Disparo ---
     public float JumpForce;
     public float Rate;
 
-    // --- Variables de Da�o y Empuje por Contacto ---
+    // --- Variables de Daño y Empuje por Contacto ---
     [SerializeField] private float damageOnContact = 1f;
 
-    [Header("Sistema de Munici�n")]
+    [Header("Sistema de Munición")]
     public Slider ammoBar;
     public int maxAmmo = 3;
     public float reloadTime = 1.5f;
@@ -28,7 +28,7 @@ public class PlayerController : CharacterStats
     [SerializeField] private float kickAnimationDuration = 0.3f;
     private bool isKicking = false;
 
-    // --- Referencias a Componentes (Espec�ficas del Jugador) ---
+    // --- Referencias a Componentes ---
     public HealthBarUI healthBar;
     public GameObject BulletPrefab;
 
@@ -36,32 +36,35 @@ public class PlayerController : CharacterStats
     private float Horizontal;
     private bool Grounded;
     private float LastShoot;
+    private bool isTrapped = false;
 
-    private bool isTrapped = false; // Bandera para saber si está atrapado
-
-    // --- Variables de Power-Up ---
+    // --- Variables de Power-Up Velocidad ---
     private float velocidadOriginal;
-    private bool conPowerUpVelocidad = false;
     private Coroutine activeSpeedPowerUp = null;
+
+    // +++ NUEVO: Variables de Protector Solar +++
+    private bool isInvincible = false; // Bandera de invencibilidad
+    private Coroutine activeSunscreenPowerUp = null;
+    private Color colorOriginal; // Para restaurar el color después del powerup
 
     [Header("Sistema de Derretimiento")]
     [SerializeField] private float meltRate = 0.5f;
     [SerializeField] private float minMeltScale = 0.3f;
 
     private int facingDirection = 1;
-
+    private SpriteRenderer spriteRenderer; // Necesitamos referencia al sprite para cambiar color
 
     protected override void Awake()
     {
         base.Awake();
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Obtener referencia
     }
-
 
     protected override void Start()
     {
         base.Start();
-
         velocidadOriginal = moveSpeed;
+        if (spriteRenderer != null) colorOriginal = spriteRenderer.color; // Guardar color original
 
         if (healthBar != null)
         {
@@ -78,31 +81,25 @@ public class PlayerController : CharacterStats
 
     private void Update()
     {
-        // --- MODIFICADO ---
-        // Si está atrapado O pateando, no procesa inputs de movimiento/disparo
         if (isTrapped || isKicking)
         {
-            // Si está atrapado, forza la detención horizontal
             if (isTrapped)
             {
                 rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
             }
-            return; // No procesa inputs de movimiento/disparo
+            return;
         }
 
-        // --- LÓGICA DE INPUTS (Movimiento) ---
         Horizontal = Input.GetAxisRaw("Horizontal");
 
         if (Horizontal < 0.0f) facingDirection = -1;
         else if (Horizontal > 0.0f) facingDirection = 1;
 
-        // No actualiza la anim de correr si está pateando (la corrutina lo maneja)
         if (!isKicking)
         {
             anim.SetBool("running", Horizontal != 0.0f);
         }
 
-        // --- LÓGICA DE INPUTS (Acciones) ---
         if (Physics2D.Raycast(transform.position, Vector3.down, 0.1f))
         {
             Grounded = true;
@@ -114,7 +111,6 @@ public class PlayerController : CharacterStats
             Jump();
         }
 
-        // Añadido chequeo de !isKicking
         if (Input.GetKey(KeyCode.Space))
         {
             if (!isReloading && !isKicking && currentAmmo > 0 && Time.time > LastShoot + Rate)
@@ -124,8 +120,6 @@ public class PlayerController : CharacterStats
             }
         }
 
-        // --- MODIFICADO ---
-        // Ahora llama a la Corrutina y solo revisa si no está recargando
         if (Input.GetKeyDown(KeyCode.F) && !isReloading)
         {
             StartCoroutine(MeleeAttackRoutine());
@@ -142,7 +136,6 @@ public class PlayerController : CharacterStats
 
     private void FixedUpdate()
     {
-        // Si está atrapado o pateando, detenemos la velocidad X
         if (isTrapped || isKicking)
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
@@ -173,15 +166,11 @@ public class PlayerController : CharacterStats
 
         foreach (Collider2D enemyCollider in hitEnemies)
         {
-            if (enemyCollider.CompareTag("Player"))
-            {
-                continue;
-            }
-            // Busca la clase base 'CharacterStats' para dañar a CUALQUIER enemigo
+            if (enemyCollider.CompareTag("Player")) continue;
+
             CharacterStats enemy = enemyCollider.GetComponent<CharacterStats>();
             if (enemy != null)
             {
-                // Llama al método TakeDamage de la base (que ya maneja la vida y la muerte)
                 enemy.TakeDamage(meleeAttackDamage);
             }
         }
@@ -190,14 +179,12 @@ public class PlayerController : CharacterStats
     private IEnumerator Reload()
     {
         isReloading = true;
-        Debug.Log("Recargando...");
-
+        // Debug.Log("Recargando...");
         yield return new WaitForSeconds(reloadTime);
-
         currentAmmo = maxAmmo;
         UpdateAmmoBar();
         isReloading = false;
-        Debug.Log("�Recarga completa!");
+        // Debug.Log("Recarga completa!");
     }
 
     private void UpdateAmmoBar()
@@ -210,6 +197,10 @@ public class PlayerController : CharacterStats
 
     public void Hit(float damage)
     {
+        // +++ MODIFICADO +++
+        // Si es invencible, ignora el daño
+        if (isInvincible) return;
+
         base.TakeDamage(damage);
 
         if (healthBar != null)
@@ -232,39 +223,100 @@ public class PlayerController : CharacterStats
     public void Heal(int amount)
     {
         base.Heal(amount);
-
         if (healthBar != null)
         {
             healthBar.UpdateHealthBar(currentHealth, maxHealth);
         }
     }
 
+    // --- PowerUps ---
+
     public void ActivarPowerUpVelocidad(float multiplicadorVelocidad, float duracion)
     {
-        if (activeSpeedPowerUp != null)
-        {
-            StopCoroutine(activeSpeedPowerUp);
-        }
-
+        if (activeSpeedPowerUp != null) StopCoroutine(activeSpeedPowerUp);
         activeSpeedPowerUp = StartCoroutine(PowerUpVelocidadCoroutine(multiplicadorVelocidad, duracion));
     }
 
     private IEnumerator PowerUpVelocidadCoroutine(float multiplicador, float tiempo)
     {
-        conPowerUpVelocidad = true;
         moveSpeed *= multiplicador;
-        Debug.Log("¡Power-up de velocidad activado! Velocidad actual: " + moveSpeed);
-
         yield return new WaitForSeconds(tiempo);
-
         moveSpeed = velocidadOriginal;
-        conPowerUpVelocidad = false;
-        activeSpeedPowerUp = null; // --- NUEVA LÍNEA --- (Se limpia al terminar)
-        Debug.Log("Power-up de velocidad terminado. Velocidad restaurada a: " + moveSpeed);
+        activeSpeedPowerUp = null;
+    }
+
+    public void CancelSpeedPowerUp()
+    {
+        if (activeSpeedPowerUp != null) StopCoroutine(activeSpeedPowerUp);
+        moveSpeed = velocidadOriginal;
+        activeSpeedPowerUp = null;
+    }
+
+    // +++ NUEVO: Método para activar el Protector Solar +++
+    public void ActivarProtectorSolar(float duracion, float auraDamage, float auraRadius)
+    {
+        if (activeSunscreenPowerUp != null) StopCoroutine(activeSunscreenPowerUp);
+        activeSunscreenPowerUp = StartCoroutine(ProtectorSolarRoutine(duracion, auraDamage, auraRadius));
+    }
+
+    // +++ NUEVO: Corrutina del Protector Solar (Invencibilidad + Aura) +++
+    private IEnumerator ProtectorSolarRoutine(float duration, float auraDamage, float auraRadius)
+    {
+        isInvincible = true;
+        
+        // Cambio visual (Amarillo dorado para indicar protección)
+        if(spriteRenderer != null) spriteRenderer.color = new Color(1f, 0.9f, 0.4f, 1f);
+
+        Debug.Log("¡Protector Solar activado! Invencible y quemando enemigos.");
+
+        float timer = 0;
+        // Hacemos daño por 'ticks' (cada 0.5 segundos para no destruir la CPU ni instakillear por frames)
+        float damageTickRate = 0.5f; 
+        float nextDamageTime = 0;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+
+            // Lógica del Aura de Daño
+            if (Time.time >= nextDamageTime)
+            {
+                Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, auraRadius);
+                foreach (Collider2D col in enemies)
+                {
+                    if (col.CompareTag("Player")) continue;
+
+                    // Usamos CharacterStats para dañar a CUALQUIER enemigo (Perros, Vecinos, etc.)
+                    CharacterStats enemyStats = col.GetComponent<CharacterStats>();
+                    if (enemyStats != null)
+                    {
+                        enemyStats.TakeDamage(auraDamage);
+                        Debug.Log("Aura quemó a " + col.name);
+                    }
+                }
+                nextDamageTime = Time.time + damageTickRate;
+            }
+
+            yield return null;
+        }
+
+        // Desactivar efectos
+        isInvincible = false;
+        if (spriteRenderer != null) spriteRenderer.color = colorOriginal;
+        activeSunscreenPowerUp = null;
+        Debug.Log("Protector Solar terminado.");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // +++ MODIFICADO +++
+        // Si es invencible, podemos chocar con enemigos sin recibir daño
+        if (isInvincible && collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Choque con enemigo anulado por Protector Solar.");
+            return;
+        }
+
         if (collision.gameObject.CompareTag("Enemy"))
         {
             ContactPoint2D contact = collision.GetContact(0);
@@ -284,6 +336,10 @@ public class PlayerController : CharacterStats
 
     private void HandleMelting()
     {
+        // +++ MODIFICADO +++ 
+        // El protector solar EVITA que te derritas
+        if (isInvincible) return;
+
         if (currentHealth > 0)
         {
             float meltDamage = meltRate * Time.deltaTime;
@@ -303,101 +359,51 @@ public class PlayerController : CharacterStats
         transform.localScale = new Vector3(targetScale * facingDirection, 1.0f, 1.0f);
     }
 
-    // --- NUEVO M�TODO ---
-    // Dibuja el radio de ataque melee en el editor
     private void OnDrawGizmosSelected()
     {
-        if (attackPoint == null)
-            return;
+        if (attackPoint != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
+        }
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
+        // Dibujo opcional para ver el radio del aura cuando seleccionas al jugador (hardcoded visualmente)
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, 3.0f); // 3.0f es un ejemplo visual
     }
 
-    // --- NUEVO MÉTODO: Recarga manual ---
-    // Este método será llamado por el objeto de munición
     public void RechargeAmmo(int amount)
     {
-        // Sumamos la cantidad
         currentAmmo += amount;
-
-        // Nos aseguramos de no pasarnos del máximo
-        if (currentAmmo > maxAmmo)
-        {
-            currentAmmo = maxAmmo;
-        }
-
-        // Actualizamos la barra de UI
+        if (currentAmmo > maxAmmo) currentAmmo = maxAmmo;
         UpdateAmmoBar();
-
-        Debug.Log("¡Munición recargada! Actual: " + currentAmmo);
     }
 
-    // Función pública para que las trampas la llamen
     public void Immobilize(float duration)
     {
-        // Solo activamos si no está ya atrapado (para evitar conflictos)
-        if (!isTrapped)
-        {
-            StartCoroutine(ImmobilizeRoutine(duration));
-        }
+        if (!isTrapped) StartCoroutine(ImmobilizeRoutine(duration));
     }
 
     private IEnumerator ImmobilizeRoutine(float duration)
     {
         isTrapped = true;
-
-        // --- NUEVA LÍNEA CLAVE ---
-        // Esto mata cualquier movimiento que llevara al instante.
         rb.linearVelocity = Vector2.zero;
-        // (Nota: Si usas una versión antigua de Unity, usa 'rb.velocity' en lugar de 'rb.linearVelocity')
-
-        // Opcional: También reseteamos la animación a Idle
         anim.SetBool("running", false);
-
-        Debug.Log("¡Jugador atrapado y detenido!");
-
         yield return new WaitForSeconds(duration);
-
         isTrapped = false;
-        Debug.Log("¡Jugador liberado!");
     }
 
     private IEnumerator MeleeAttackRoutine()
     {
-        // 1. Inicia el estado de patada
         isKicking = true;
-        anim.SetBool("isKicking", true); // <-- Envía el Booleano al Animator
-        anim.SetBool("running", false); // Detiene la animación de correr
+        anim.SetBool("isKicking", true);
+        anim.SetBool("running", false);
 
-        // 2. Ejecuta la lógica de daño (OverlapCircle)
         MeleeAttack();
 
-        // 3. Espera a que termine la animación
         yield return new WaitForSeconds(kickAnimationDuration);
-
-        // 4. Termina la animación
         anim.SetBool("isKicking", false);
-
-        // 5. Espera el resto del cooldown
-        // (Ej: 1s Cooldown - 0.3s Anim = 0.7s de espera)
         yield return new WaitForSeconds(meleeAttackCooldown - kickAnimationDuration);
-
-        // 6. Permite patear de nuevo
         isKicking = false;
     }
-    
-    public void CancelSpeedPowerUp()
-    {
-        if (activeSpeedPowerUp != null)
-        {
-            StopCoroutine(activeSpeedPowerUp);
-        }
-
-        moveSpeed = velocidadOriginal;
-        conPowerUpVelocidad = false;
-        activeSpeedPowerUp = null;
-        Debug.Log("Power-up cancelado. Velocidad restaurada.");
-    }
 }
-
