@@ -81,8 +81,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -814332461
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -7107556683632657664, guid: 1657984b626664845bb19534ae9b9f62, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -204,7 +204,8 @@ MonoBehaviour:
   attackPoint: {fileID: 4233307404750633098}
   attackRadius: 0.1
   meleeAttackDamage: 5
-  meleeAttackRate: 2
+  meleeAttackCooldown: 1
+  kickAnimationDuration: 0.3
   healthBar: {fileID: 0}
   BulletPrefab: {fileID: 9141338218809068285, guid: d692804f2efc3634aafa85ce7ed9aa74, type: 3}
   meltRate: 0

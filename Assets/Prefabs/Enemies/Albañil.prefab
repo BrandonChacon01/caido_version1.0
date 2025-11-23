@@ -172,8 +172,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1251998705
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 849ef90d475da7e4d9a15ffb12ff1270, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -296,18 +296,19 @@ MonoBehaviour:
   maxHealth: 10
   moveSpeed: 1
   player: {fileID: 0}
-  slashPrefab: {fileID: 8285540226108178885, guid: 4ba17f1a58b60314e9cfa9bfcb1e9ddd, type: 3}
-  attackPoint: {fileID: 7782970162622724481}
+  healthSlider: {fileID: 34478554091359608}
   attackDistance: 0.15
-  attackDamage: 4
-  attackWaitTime: 1
+  contactDamage: 1
   baseScale: 1
   ledgeCheck: {fileID: 5785860624965253420}
   checkDistance: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  healthSlider: {fileID: 34478554091359608}
+  slashPrefab: {fileID: 8285540226108178885, guid: 4ba17f1a58b60314e9cfa9bfcb1e9ddd, type: 3}
+  attackPoint: {fileID: 7782970162622724481}
+  attackDamage: 4
+  attackWaitTime: 1
 --- !u!1 &4005518509159276136
 GameObject:
   m_ObjectHideFlags: 0
