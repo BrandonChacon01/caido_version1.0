@@ -2642,6 +2642,10 @@ PrefabInstance:
       value: LevelEndFlag1
       objectReference: {fileID: 0}
     - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: FlagSprite
+      value: 
+      objectReference: {fileID: 828681789646810859, guid: 8b7ac92279402874080e2cbc410ec9c0, type: 3}
+    - target: {fileID: 2041521860575300479, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
       propertyPath: FlagColor.b
       value: 1
       objectReference: {fileID: 0}
@@ -2713,6 +2717,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 828681789646810859, guid: 8b7ac92279402874080e2cbc410ec9c0, type: 3}
+    - target: {fileID: 8582344308668206927, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8582344308668206927, guid: 3e5e6218fae665e4db1061607e1e94af, type: 3}
       propertyPath: m_Color.b
       value: 1
