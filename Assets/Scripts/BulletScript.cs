@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BulletScript : MonoBehaviour
 {
@@ -106,6 +106,14 @@ public class BulletScript : MonoBehaviour
         if (elotero != null)
         {
             elotero.Hit(Damage);
+            DestroyBullet();
+            return;
+        }
+
+        BossFinalAI boss = other.GetComponent<BossFinalAI>();
+        if (boss != null)
+        {
+            boss.Hit(Damage);  // ← Debe llamar a Hit(), NO TakeDamage()
             DestroyBullet();
             return;
         }
