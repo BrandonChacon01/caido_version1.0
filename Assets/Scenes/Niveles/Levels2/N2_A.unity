@@ -1807,6 +1807,14 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: -2
       objectReference: {fileID: 0}
+    - target: {fileID: 4850295096087629422, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
+      propertyPath: spawnInterval
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850295096087629422, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
+      propertyPath: activationDistance
+      value: 1.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6235895810186447220, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.11039078

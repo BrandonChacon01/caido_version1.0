@@ -152,11 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf07ef6fd6de3d45a991306362da8b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeedBoostPatch
-  multiplicadorVelocidad: 3
-  lifeTimeInSeconds: 300
+  multiplicadorVelocidad: 2.3
+  lifeTimeInSeconds: 15
   gravedad: 0
   proximitySound: {fileID: 8300000, guid: 273650b945ba6b441bf4636cb745a77e, type: 3}
-  soundVolume: 0.5
+  soundVolume: 0.3
 --- !u!50 &6332051655819304549
 Rigidbody2D:
   serializedVersion: 5

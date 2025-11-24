@@ -106,9 +106,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MultiEnemySpawner
   enemyPrefabs:
   - {fileID: 9019726392077895016, guid: 0674f1ccb88b5c9488c90874006313b9, type: 3}
-  spawnInterval: 10
-  maxEnemies: 5
-  activationDistance: 2
+  spawnInterval: 3
+  maxEnemies: 2
+  activationDistance: 1
   spawnPoint: {fileID: 3983233432606153995}
 --- !u!1 &7532808207767144220
 GameObject:
