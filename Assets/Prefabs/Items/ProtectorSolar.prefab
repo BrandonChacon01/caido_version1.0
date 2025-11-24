@@ -146,7 +146,7 @@ MonoBehaviour:
   radioAura: 0.3
   danoAura: 2
   efectoRecogido: {fileID: 0}
-  sonidoRecogido: {fileID: 0}
+  sonidoRecogido: {fileID: 8300000, guid: be215c15601179e448723b540b9a8281, type: 3}
 --- !u!114 &1490418974651421668
 MonoBehaviour:
   m_ObjectHideFlags: 0
