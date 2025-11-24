@@ -106,7 +106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BulletScript
   Speed: 1
-  Damage: 4
+  Damage: 0.8
   Sound: {fileID: 0}
 --- !u!50 &-7352371446446389609
 Rigidbody2D:

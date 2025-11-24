@@ -566,12 +566,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e57bf95f2d44c499989ed0f0773807, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CholitoAI
-  maxHealth: 10
+  maxHealth: 3
   moveSpeed: 1
   player: {fileID: 0}
   healthSlider: {fileID: 3519098103506502544}
   attackDistance: 1
-  contactDamage: 1
+  contactDamage: 0.5
   baseScale: 1
   ledgeCheck: {fileID: 3015247255535414807}
   checkDistance: 0.2
@@ -579,8 +579,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   BulletPrefab: {fileID: 9141338218809068285, guid: 25e8272bdec09f94e877850708a6b54f, type: 3}
-  Rate: 2
-  Recoil: 2
+  Rate: 1
+  Recoil: 1
 --- !u!1 &9027054023396912397
 GameObject:
   m_ObjectHideFlags: 0
