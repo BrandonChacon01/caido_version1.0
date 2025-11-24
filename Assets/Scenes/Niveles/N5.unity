@@ -494,10 +494,10 @@ MonoBehaviour:
   - {fileID: 1391614201214786724, guid: 627cc79eda76b99419032e90ae2203d4, type: 3}
   - {fileID: 7303883299899987135, guid: f8a243ba6646ebd479d1b520e7640da3, type: 3}
   - {fileID: 9165511568770904670, guid: 4ea219971b9d5a540818b8411720bee7, type: 3}
-  dropInterval: 20
+  dropInterval: 8
   maxItemsActive: 3
   minX: -2
-  maxX: 1
+  maxX: 4
   spawnHeight: -1.4
   useTransformAsCenter: 1
   fallSpeed: 2
@@ -516,7 +516,7 @@ Transform:
   m_GameObject: {fileID: 403201966}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.277, y: 1.708, z: 0}
+  m_LocalPosition: {x: 1.97, y: 1.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2419,6 +2419,11 @@ MonoBehaviour:
   moveSpeed: 1
   bossSpeed: 0.5
   canMove: 1
+  stopDistance: 1
+  chaseDistance: 6
+  fleeDistance: 0.8
+  detectEdges: 1
+  edgeDetectionDistance: 2
   enemyPrefabs:
   - {fileID: 9019726392077895016, guid: 0674f1ccb88b5c9488c90874006313b9, type: 3}
   - {fileID: 8364322663392358123, guid: 5e535864e18b745409ecce88d0adb3b3, type: 3}

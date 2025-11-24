@@ -15,6 +15,21 @@ public class BossFinalAI : CharacterStats
     [Tooltip("¿El jefe patrulla o se queda quieto?")]
     [SerializeField] private bool canMove = true;
 
+    [Tooltip("Distancia mínima al jugador (se detiene si está más cerca)")]
+    [SerializeField] private float stopDistance = 1.5f;
+
+    [Tooltip("Distancia para empezar a perseguir (si está más lejos)")]
+    [SerializeField] private float chaseDistance = 8f;
+
+    [Tooltip("Distancia para huir del jugador (si está MUY cerca, ir al lado opuesto)")]
+    [SerializeField] private float fleeDistance = 0.8f;
+
+    [Tooltip("Detectar bordes para evitar caídas")]
+    [SerializeField] private bool detectEdges = true;
+
+    [Tooltip("Distancia del raycast para detectar suelo")]
+    [SerializeField] private float edgeDetectionDistance = 2f;
+
     [Header("💀 Spawn de Enemigos")]
     [Tooltip("Prefabs de enemigos que puede spawnear (arrastra aquí los prefabs)")]
     [SerializeField] private GameObject[] enemyPrefabs;
@@ -117,6 +132,7 @@ public class BossFinalAI : CharacterStats
 
         UnityEngine.Debug.Log($"[BossFinal] Inicialización completa");
     }
+
     private void Update()
     {
         if (isDead) return;
@@ -129,7 +145,7 @@ public class BossFinalAI : CharacterStats
     {
         if (isDead || !canMove) return;
 
-        // Movimiento de patrullaje lento
+        // Movimiento inteligente
         HandleMovement();
     }
 
@@ -170,25 +186,83 @@ public class BossFinalAI : CharacterStats
     }
 
     /// <summary>
-    /// Movimiento: Perseguir al jugador lentamente
+    /// Detectar si hay suelo adelante (para no caerse)
+    /// </summary>
+    private bool IsGroundAhead()
+    {
+        if (!detectEdges) return true; // Si no detectamos bordes, siempre hay suelo
+
+        // Raycast hacia abajo desde adelante del boss
+        Vector2 frontPosition = new Vector2(
+            transform.position.x + (currentMoveDirection * 0.5f),
+            transform.position.y
+        );
+
+        RaycastHit2D hit = Physics2D.Raycast(frontPosition, Vector2.down, edgeDetectionDistance);
+
+        // Debug visual
+        Debug.DrawRay(frontPosition, Vector2.down * edgeDetectionDistance, hit ? Color.green : Color.red);
+
+        return hit.collider != null;
+    }
+
+    /// <summary>
+    /// Movimiento: Comportamiento inteligente según distancia al jugador
     /// </summary>
     private void HandleMovement()
     {
         if (player == null) return;
 
-        // Calcular dirección hacia el jugador
+        // Calcular distancia y dirección al jugador
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         float directionToPlayer = player.position.x - transform.position.x;
 
-        // Si el jugador está a más de 1 unidad de distancia, moverse hacia él
-        if (Mathf.Abs(directionToPlayer) > 1f)
+        // 🏃 COMPORTAMIENTO 1: MUY CERCA - HUIR
+        if (distanceToPlayer < fleeDistance)
+        {
+            currentMoveDirection = directionToPlayer > 0 ? -1f : 1f; // Ir al lado opuesto
+
+            if (IsGroundAhead())
+            {
+                rb.linearVelocity = new Vector2(currentMoveDirection * bossSpeed, rb.linearVelocity.y);
+            }
+            else
+            {
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
+        }
+        // ⏸️ COMPORTAMIENTO 2: CERCA - DETENERSE
+        else if (distanceToPlayer < stopDistance)
+        {
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        }
+        // 🎯 COMPORTAMIENTO 3: DISTANCIA MEDIA - PERSEGUIR
+        else if (distanceToPlayer < chaseDistance)
         {
             currentMoveDirection = directionToPlayer > 0 ? 1f : -1f;
-            rb.linearVelocity = new Vector2(currentMoveDirection * bossSpeed, rb.linearVelocity.y);
+
+            if (IsGroundAhead())
+            {
+                rb.linearVelocity = new Vector2(currentMoveDirection * bossSpeed, rb.linearVelocity.y);
+            }
+            else
+            {
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
         }
+        // 🚶 COMPORTAMIENTO 4: MUY LEJOS - CAMINAR LENTO
         else
         {
-            // Detenerse si está cerca del jugador
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            currentMoveDirection = directionToPlayer > 0 ? 1f : -1f;
+
+            if (IsGroundAhead())
+            {
+                rb.linearVelocity = new Vector2(currentMoveDirection * (bossSpeed * 0.5f), rb.linearVelocity.y);
+            }
+            else
+            {
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            }
         }
 
         // Flip del sprite según la dirección
@@ -248,9 +322,6 @@ public class BossFinalAI : CharacterStats
         UnityEngine.Debug.Log($"[BossFinal] Enemigo spawneado: {enemyPrefab.name} | Total activos: {spawnedEnemies.Count}");
     }
 
-    /// <summary>
-    /// Recibir daño (llamado por balas o ataques melee)
-    /// </summary>
     /// <summary>
     /// Recibir daño (llamado por balas o ataques melee)
     /// </summary>
@@ -410,7 +481,7 @@ public class BossFinalAI : CharacterStats
     }
 
     /// <summary>
-    /// Gizmos para visualizar las posiciones de spawn
+    /// Gizmos para visualizar las posiciones de spawn y zonas de comportamiento
     /// </summary>
     private void OnDrawGizmosSelected()
     {
@@ -425,5 +496,15 @@ public class BossFinalAI : CharacterStats
         // Dibujar línea del collider del jefe
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(transform.position, GetComponent<Collider2D>()?.bounds.size ?? Vector3.one);
+
+        // Dibujar zonas de comportamiento
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, fleeDistance); // Zona de huida
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, stopDistance); // Zona de parada
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, chaseDistance); // Zona de persecución
     }
 }
