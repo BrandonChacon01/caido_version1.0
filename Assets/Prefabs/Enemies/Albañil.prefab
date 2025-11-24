@@ -293,12 +293,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1d62efdc11d40a4ca937579757c9a77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlbanilAI
-  maxHealth: 10
+  maxHealth: 3
   moveSpeed: 1
   player: {fileID: 0}
   healthSlider: {fileID: 34478554091359608}
   attackDistance: 0.15
-  contactDamage: 1
+  contactDamage: 0.3
   baseScale: 1
   ledgeCheck: {fileID: 5785860624965253420}
   checkDistance: 0.1
@@ -307,8 +307,8 @@ MonoBehaviour:
     m_Bits: 64
   slashPrefab: {fileID: 8285540226108178885, guid: 4ba17f1a58b60314e9cfa9bfcb1e9ddd, type: 3}
   attackPoint: {fileID: 7782970162622724481}
-  attackDamage: 4
-  attackWaitTime: 1
+  attackDamage: 1
+  attackWaitTime: 1.5
 --- !u!1 &4005518509159276136
 GameObject:
   m_ObjectHideFlags: 0

@@ -363,7 +363,7 @@ MonoBehaviour:
   instructionText: {fileID: 445780633}
   backgroundPanel: {fileID: 59690665}
   backgroundMusicSource: {fileID: 0}
-  backgroundMusicClip: {fileID: 0}
+  backgroundMusicClip: {fileID: 8300000, guid: 8f44d3f70cd8ff644a77a26670208c34, type: 3}
   musicVolume: 0.5
   loopMusic: 1
   musicFadeInDuration: 1
@@ -375,6 +375,8 @@ MonoBehaviour:
   fadeInDuration: 0.5
   blinkInstructionText: 1
   blinkSpeed: 1
+  isFinalInterludio: 1
+  finalSceneName: MainMenu
 --- !u!4 &982425159
 Transform:
   m_ObjectHideFlags: 0

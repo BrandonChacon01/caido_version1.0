@@ -32,9 +32,32 @@ public class UIManager : MonoBehaviour
         {
             UnityEngine.Debug.LogWarning("[UIManager] No se encontró LevelTimer en la escena");
         }
+        else
+        {
+            // 🔹 NUEVO: Suscribirse al evento de tiempo agotado
+            levelTimer.OnTimeUp += OnTimerExpired;
+            UnityEngine.Debug.Log("[UIManager] ✅ Suscrito al evento OnTimeUp del LevelTimer");
+        }
 
         // Buscar el PauseMenuController
         pauseMenuController = FindFirstObjectByType<PauseMenuController>();
+    }
+
+    // 🔹 NUEVO: Método que se ejecuta cuando el timer llega a 0
+    private void OnTimerExpired()
+    {
+        UnityEngine.Debug.Log("[UIManager] ⏰ ¡Tiempo agotado! Mostrando Game Over");
+        MostrarPanelGameOver();
+    }
+
+    // 🔹 NUEVO: Importante desuscribirse para evitar memory leaks
+    private void OnDestroy()
+    {
+        if (levelTimer != null)
+        {
+            levelTimer.OnTimeUp -= OnTimerExpired;
+            UnityEngine.Debug.Log("[UIManager] Desuscrito del evento OnTimeUp");
+        }
     }
 
     /// <summary>

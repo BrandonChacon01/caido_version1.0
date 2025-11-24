@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -785732617
-  m_SortingLayer: 1
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e79a31027a5c919498d60c8d6d369a02, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -106,9 +106,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MultiEnemySpawner
   enemyPrefabs:
   - {fileID: 2548366196871551585, guid: f9044af1af5afd34a9c3aa19903028cf, type: 3}
-  spawnInterval: 5
-  maxEnemies: 5
-  activationDistance: 20
+  spawnInterval: 3
+  maxEnemies: 4
+  activationDistance: 1.5
   spawnPoint: {fileID: 6802406752736164672}
 --- !u!1 &4656368385266018245
 GameObject:

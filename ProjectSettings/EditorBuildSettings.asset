@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/VideoIntro_Splash.unity
+    guid: b28297f87c46a5141bdfeee30bdc7635
+  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: e38b8acdd22fe0a47828887967ddb123
   - enabled: 1
@@ -29,7 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Niveles/Levels2/N2_B.unity
     guid: c51358f4da38ce94aa803e8a5297f639
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Niveles/Levels2/N2_B.unity
     guid: c51358f4da38ce94aa803e8a5297f639
   - enabled: 1
