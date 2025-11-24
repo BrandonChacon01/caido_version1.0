@@ -130,7 +130,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 2
   Damage: 1
-  Sound: {fileID: 8300000, guid: 5f61a16cee4a66e46a49c8954e3c0ca9, type: 3}
+  Sound: {fileID: 8300000, guid: 384cae5f8ebf9c047944158189b034d9, type: 3}
 --- !u!58 &9141338218809068280
 CircleCollider2D:
   m_ObjectHideFlags: 0

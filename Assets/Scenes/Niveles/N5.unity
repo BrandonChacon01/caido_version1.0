@@ -1351,12 +1351,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1375646339}
     - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meltRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
       propertyPath: healthBar
       value: 
       objectReference: {fileID: 2003924273}
     - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
       propertyPath: maxHealth
-      value: 100
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: moveSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: attackRadius
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meleeAttackDamage
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meleeAttackCooldown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: kickAnimationDuration
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

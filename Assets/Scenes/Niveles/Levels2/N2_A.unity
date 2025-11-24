@@ -896,6 +896,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164460902}
   m_CullTransparentMesh: 1
+--- !u!114 &173938923 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4547664688650375632, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 871686589}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871686591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &173938924 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4174279886047386192, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 871686589}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871686594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e58f03163b41f664f82d7176d6e4fcaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
 --- !u!4 &179418219 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400291570879713634, guid: 722baa3938a339249950059f49882598, type: 3}
@@ -1729,8 +1751,40 @@ PrefabInstance:
       value: Marcianito
       objectReference: {fileID: 0}
     - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: ammoBar
+      value: 
+      objectReference: {fileID: 173938923}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meltRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 173938924}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
       propertyPath: maxHealth
-      value: 100
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: moveSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: attackRadius
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meleeAttackDamage
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meleeAttackCooldown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: kickAnimationDuration
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1752,6 +1806,14 @@ PrefabInstance:
     - target: {fileID: 4273514094246782937, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
       propertyPath: m_SortingOrder
       value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850295096087629422, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
+      propertyPath: spawnInterval
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4850295096087629422, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
+      propertyPath: activationDistance
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6235895810186447220, guid: 3a1d04bb3dd02114fb9abb6400f712fb, type: 3}
       propertyPath: m_LocalPosition.x

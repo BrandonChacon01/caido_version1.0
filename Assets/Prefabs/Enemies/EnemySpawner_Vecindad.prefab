@@ -110,7 +110,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -785732617
-  m_SortingLayer: 1
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f91e52387ffa7f34085152121e8141af, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -138,7 +138,7 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 5038250446558785672, guid: 8cda2aa9737d72f40aecfa46355eab44, type: 3}
   - {fileID: 7286695067286737362, guid: 09bba042446df734d9dac91f648f0caf, type: 3}
-  spawnInterval: 5
+  spawnInterval: 3
   maxEnemies: 5
-  activationDistance: 2
+  activationDistance: 1.5
   spawnPoint: {fileID: 813780087162815238}
