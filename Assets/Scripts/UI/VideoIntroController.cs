@@ -13,13 +13,13 @@ public class VideoIntroController : MonoBehaviour
     [SerializeField] private string nextSceneName = "SampleScene"; // Escena del juego (fallback)
 
     [Header("Skip Options")]
-    [SerializeField] private bool allowSkip = true;
+    [SerializeField] private bool allowSkip = false;   // 🔒 Siempre desactivado
     [SerializeField] private KeyCode skipKey = KeyCode.Space;
     [SerializeField] private KeyCode escapeKey = KeyCode.Escape;
 
     private bool videoFinished = false;
     private bool isLoadingNextScene = false;
-    private bool levelsGenerated = false; // 🔹 NUEVO
+    private bool levelsGenerated = false;
 
     private void Start()
     {
@@ -41,7 +41,7 @@ public class VideoIntroController : MonoBehaviour
             nextSceneName = LoadingPayload.NextScene;
         }
 
-        // 🔹 NUEVO: Generar la selección aleatoria de niveles al inicio del video
+        // Generar la selección aleatoria de niveles al inicio del video
         GenerateLevelSequence();
 
         // Configurar eventos del VideoPlayer
@@ -54,14 +54,8 @@ public class VideoIntroController : MonoBehaviour
 
     private void Update()
     {
-        // Permitir saltar el video si está habilitado
-        if (allowSkip && !isLoadingNextScene && !videoFinished)
-        {
-            if (Input.GetKeyDown(skipKey) || Input.GetKeyDown(escapeKey) || Input.anyKeyDown)
-            {
-                SkipVideo();
-            }
-        }
+        // 🔒 Bloqueado: ya no se permite saltar el video con ninguna tecla
+        // Antes aquí se chequeaba Input.anyKeyDown / skipKey / escapeKey
     }
 
     /// <summary>
@@ -102,12 +96,13 @@ public class VideoIntroController : MonoBehaviour
 
     /// <summary>
     /// Salta el video y carga la siguiente escena
+    /// (Solo debería usarse desde código si alguna vez lo necesitas; el jugador ya no puede llamarlo con teclas)
     /// </summary>
     public void SkipVideo()
     {
         if (isLoadingNextScene) return;
 
-        UnityEngine.Debug.Log("[VideoIntroController] Video saltado por el usuario.");
+        UnityEngine.Debug.Log("[VideoIntroController] Video saltado (llamado por código).");
         if (videoPlayer != null && videoPlayer.isPlaying)
         {
             videoPlayer.Stop();
