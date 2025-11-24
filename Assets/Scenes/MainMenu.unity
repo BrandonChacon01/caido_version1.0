@@ -2669,7 +2669,7 @@ MonoBehaviour:
   useVideoIntro: 1
   useLevelSystem: 1
   backgroundMusicSource: {fileID: 1480852624}
-  backgroundMusicClip: {fileID: 8300000, guid: 8f44d3f70cd8ff644a77a26670208c34, type: 3}
+  backgroundMusicClip: {fileID: 8300000, guid: a6909b111ebf87b4b800ce0b2046d9a0, type: 3}
   musicVolume: 0.5
   loopMusic: 1
   musicFadeInDuration: 1.5
