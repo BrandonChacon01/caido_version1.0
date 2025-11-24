@@ -867,7 +867,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 311, y: 250}
+  m_AnchoredPosition: {x: 739.2, y: 391.2}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &297479393
@@ -22109,19 +22109,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6309106434027505295, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 312
+      value: 747.1
       objectReference: {fileID: 0}
     - target: {fileID: 6309106434027505295, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 199
+      value: 351
       objectReference: {fileID: 0}
     - target: {fileID: 7451182526076649733, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 312
+      value: 745.5
       objectReference: {fileID: 0}
     - target: {fileID: 7451182526076649733, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 161
+      value: 320.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 8300679294201952717, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size

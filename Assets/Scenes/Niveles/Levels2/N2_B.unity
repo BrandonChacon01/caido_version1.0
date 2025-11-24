@@ -21007,11 +21007,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2320281456964773099, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 312
+      value: 735.2
       objectReference: {fileID: 0}
     - target: {fileID: 2320281456964773099, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 248
+      value: 387.7
       objectReference: {fileID: 0}
     - target: {fileID: 2832708862615838229, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_Name
@@ -21059,19 +21059,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6309106434027505295, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 310
+      value: 740.7
       objectReference: {fileID: 0}
     - target: {fileID: 6309106434027505295, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 201.37
+      value: 347.5
       objectReference: {fileID: 0}
     - target: {fileID: 7451182526076649733, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 310
+      value: 741.2
       objectReference: {fileID: 0}
     - target: {fileID: 7451182526076649733, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 162
+      value: 317.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 7562241043868229315, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 8300679294201952717, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
