@@ -1279,10 +1279,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e028fc340147a374cb00c59689d4a814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  panelGameOver: {fileID: 0}
-  HealthBar: {fileID: 0}
-  HeatBar: {fileID: 0}
-  runTimeText: {fileID: 0}
+  panelGameOver: {fileID: 1361223223}
+  HealthBar: {fileID: 1361223225}
+  HeatBar: {fileID: 1361223224}
+  runTimeText: {fileID: 1361223226}
   mainMenuSceneName: MainMenu
 --- !u!4 &405110569
 Transform:
@@ -1998,8 +1998,40 @@ PrefabInstance:
       value: Marcianito
       objectReference: {fileID: 0}
     - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: ammoBar
+      value: 
+      objectReference: {fileID: 2015568178}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meltRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: healthBar
+      value: 
+      objectReference: {fileID: 2015568179}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
       propertyPath: maxHealth
-      value: 100
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: moveSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: attackRadius
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meleeAttackDamage
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: meleeAttackCooldown
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2414023747943833261, guid: 722baa3938a339249950059f49882598, type: 3}
+      propertyPath: kickAnimationDuration
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -23125,6 +23157,32 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 9173249398863711111, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
   m_PrefabInstance: {fileID: 1361223221}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1361223223 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7072463521553754849, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 1361223221}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1361223224 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 533664207924998841, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 1361223221}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1361223225 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8804417830211672542, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 1361223221}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1361223226 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5543510628577390631, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 1361223221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1408056937
 GameObject:
   m_ObjectHideFlags: 0
@@ -24329,6 +24387,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1994677212}
   m_CullTransparentMesh: 1
+--- !u!114 &2015568178 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4547664688650375632, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 1361223221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361223224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+--- !u!114 &2015568179 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4174279886047386192, guid: 39f377dcfd9dd3a4892f5cf496985c9f, type: 3}
+  m_PrefabInstance: {fileID: 1361223221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1361223225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e58f03163b41f664f82d7176d6e4fcaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthBarUI
 --- !u!1001 &2023736863
 PrefabInstance:
   m_ObjectHideFlags: 0
