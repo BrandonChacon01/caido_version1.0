@@ -20,8 +20,14 @@ public class VideoSplashController : MonoBehaviour
     [SerializeField] private KeyCode escapeKey = KeyCode.Escape;
     [SerializeField] private KeyCode anyKey = KeyCode.Return; // Enter también
 
+    [Header("Skip Delay")]
+    [Tooltip("Segundos que deben pasar antes de permitir saltar el video")]
+    [SerializeField] private float skipDelaySeconds = 11f;
+
     private bool videoFinished = false;
     private bool isLoadingNextScene = false;
+    private float elapsedTime = 0f;          // Tiempo transcurrido desde que empezó el video
+    private bool canSkipNow = false;         // Se activa cuando ya pasaron los 11 segundos
 
     private void Start()
     {
@@ -43,15 +49,34 @@ public class VideoSplashController : MonoBehaviour
 
         // Iniciar reproducción
         videoPlayer.Play();
-        UnityEngine.Debug.Log("[VideoSplashController] 🎬 Reproduciendo video splash inicial...");
+        elapsedTime = 0f;
+        canSkipNow = false;
+
+        UnityEngine.Debug.Log("[VideoSplashController] Reproduciendo video splash inicial...");
     }
 
     private void Update()
     {
-        // Permitir saltar el video si está habilitado
-        if (allowSkip && !isLoadingNextScene && !videoFinished)
+        // Actualizar tiempo transcurrido mientras el video se está reproduciendo
+        if (!videoFinished && !isLoadingNextScene && videoPlayer != null && videoPlayer.isPlaying)
         {
-            // Cualquier tecla salta el video
+            elapsedTime += Time.deltaTime;
+
+            // Habilitar el salto después de skipDelaySeconds (11 segundos)
+            if (!canSkipNow && elapsedTime >= skipDelaySeconds)
+            {
+                canSkipNow = true;
+                UnityEngine.Debug.Log($"[VideoSplashController] Ya se pueden usar teclas para saltar el video (t = {elapsedTime:F2}s).");
+            }
+        }
+
+        // Permitir saltar el video solo si:
+        // - allowSkip está activo
+        // - YA se cumplió el tiempo mínimo (canSkipNow)
+        // - no se está cargando la siguiente escena
+        // - el video no ha terminado aún
+        if (allowSkip && canSkipNow && !isLoadingNextScene && !videoFinished)
+        {
             if (Input.GetKeyDown(skipKey) ||
                 Input.GetKeyDown(escapeKey) ||
                 Input.GetKeyDown(anyKey) ||
@@ -68,7 +93,7 @@ public class VideoSplashController : MonoBehaviour
     private void OnVideoFinished(VideoPlayer vp)
     {
         videoFinished = true;
-        UnityEngine.Debug.Log("[VideoSplashController] ✅ Video splash terminado. Cargando MainMenu...");
+        UnityEngine.Debug.Log("[VideoSplashController] Video splash terminado. Cargando MainMenu...");
         LoadNextScene();
     }
 
@@ -79,7 +104,7 @@ public class VideoSplashController : MonoBehaviour
     {
         if (isLoadingNextScene) return;
 
-        UnityEngine.Debug.Log("[VideoSplashController] ⏭️ Video splash saltado por el usuario.");
+        UnityEngine.Debug.Log("[VideoSplashController] Video splash saltado por el usuario.");
 
         if (videoPlayer != null && videoPlayer.isPlaying)
         {
@@ -98,7 +123,7 @@ public class VideoSplashController : MonoBehaviour
 
         isLoadingNextScene = true;
 
-        UnityEngine.Debug.Log($"[VideoSplashController] 🎯 Cargando escena: {nextSceneName}");
+        UnityEngine.Debug.Log($"[VideoSplashController] Cargando escena: {nextSceneName}");
         SceneManager.LoadScene(nextSceneName);
     }
 
