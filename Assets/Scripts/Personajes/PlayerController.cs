@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// +++ AGREGADO: Para evitar ambigüedad con Debug +++
-using Debug = UnityEngine.Debug;
-
 public class PlayerController : CharacterStats
 {
-    // --- Variables de Movimiento y Disparo ---
     public float JumpForce;
     public float Rate;
 
-    // --- Variables de Daño y Empuje por Contacto ---
     [SerializeField] private float damageOnContact = 1f;
 
     [Header("Sistema de Munición")]
@@ -31,43 +26,41 @@ public class PlayerController : CharacterStats
     [SerializeField] private float kickAnimationDuration = 0.3f;
     private bool isKicking = false;
 
-    // --- Referencias a Componentes ---
     public HealthBarUI healthBar;
     public GameObject BulletPrefab;
 
-    // --- Variables Privadas de Control ---
     private float Horizontal;
     private bool Grounded;
     private float LastShoot;
     private bool isTrapped = false;
 
-    // --- Variables de Power-Up Velocidad ---
     private float velocidadOriginal;
     private Coroutine activeSpeedPowerUp = null;
 
-    // +++ NUEVO: Variables de Protector Solar +++
-    private bool isInvincible = false; // Bandera de invencibilidad
+    private bool isInvincible = false;
     private Coroutine activeSunscreenPowerUp = null;
-    private Color colorOriginal; // Para restaurar el color después del powerup
+    private Color colorOriginal;
 
     [Header("Sistema de Derretimiento")]
     [SerializeField] private float meltRate = 0.5f;
     [SerializeField] private float minMeltScale = 0.3f;
 
     private int facingDirection = 1;
-    private SpriteRenderer spriteRenderer; // Necesitamos referencia al sprite para cambiar color
+    private SpriteRenderer spriteRenderer;
+
+    private float currentLeftBoundary = float.NegativeInfinity;
 
     protected override void Awake()
     {
         base.Awake();
-        spriteRenderer = GetComponent<SpriteRenderer>(); // Obtener referencia
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     protected override void Start()
     {
         base.Start();
         velocidadOriginal = moveSpeed;
-        if (spriteRenderer != null) colorOriginal = spriteRenderer.color; // Guardar color original
+        if (spriteRenderer != null) colorOriginal = spriteRenderer.color;
 
         if (healthBar != null)
         {
@@ -146,6 +139,22 @@ public class PlayerController : CharacterStats
         }
 
         rb.linearVelocity = new Vector2(Horizontal * moveSpeed, rb.linearVelocity.y);
+
+        if (currentLeftBoundary != float.NegativeInfinity)
+        {
+            Vector3 pos = transform.position;
+
+            if (pos.x < currentLeftBoundary)
+            {
+                pos.x = currentLeftBoundary;
+                transform.position = pos;
+
+                if (rb.linearVelocity.x < 0)
+                {
+                    rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+                }
+            }
+        }
     }
 
     private void Jump()
@@ -182,12 +191,10 @@ public class PlayerController : CharacterStats
     private IEnumerator Reload()
     {
         isReloading = true;
-        // Debug.Log("Recargando...");
         yield return new WaitForSeconds(reloadTime);
         currentAmmo = maxAmmo;
         UpdateAmmoBar();
         isReloading = false;
-        // Debug.Log("Recarga completa!");
     }
 
     private void UpdateAmmoBar()
@@ -200,8 +207,6 @@ public class PlayerController : CharacterStats
 
     public void Hit(float damage)
     {
-        // +++ MODIFICADO +++
-        // Si es invencible, ignora el daño
         if (isInvincible) return;
 
         base.TakeDamage(damage);
@@ -212,12 +217,10 @@ public class PlayerController : CharacterStats
         }
     }
 
-    // +++ NUEVO: Método para muerte instantánea que ignora protecciones +++
     public void MuerteInstantanea()
     {
-        Debug.Log("¡Muerte instantánea! El jugador cayó en la DeathZone.");
+        UnityEngine.Debug.Log("¡Muerte instantánea! El jugador cayó en la DeathZone.");
 
-        // Detener cualquier power-up activo
         if (activeSunscreenPowerUp != null)
         {
             StopCoroutine(activeSunscreenPowerUp);
@@ -230,18 +233,16 @@ public class PlayerController : CharacterStats
             activeSpeedPowerUp = null;
         }
 
-        // Restaurar valores y color
         isInvincible = false;
         if (spriteRenderer != null) spriteRenderer.color = colorOriginal;
         moveSpeed = velocidadOriginal;
 
-        // Forzar muerte directamente
         Die();
     }
 
     protected override void Die()
     {
-        Debug.Log("El jugador ha muerto.");
+        UnityEngine.Debug.Log("El jugador ha muerto.");
         UIManager uiManager = FindFirstObjectByType<UIManager>();
         if (uiManager != null)
         {
@@ -259,7 +260,10 @@ public class PlayerController : CharacterStats
         }
     }
 
-    // --- PowerUps ---
+    public void SetLeftBoundary(float boundary)
+    {
+        currentLeftBoundary = boundary;
+    }
 
     public void ActivarPowerUpVelocidad(float multiplicadorVelocidad, float duracion)
     {
@@ -282,25 +286,21 @@ public class PlayerController : CharacterStats
         activeSpeedPowerUp = null;
     }
 
-    // +++ NUEVO: Método para activar el Protector Solar +++
     public void ActivarProtectorSolar(float duracion, float auraDamage, float auraRadius)
     {
         if (activeSunscreenPowerUp != null) StopCoroutine(activeSunscreenPowerUp);
         activeSunscreenPowerUp = StartCoroutine(ProtectorSolarRoutine(duracion, auraDamage, auraRadius));
     }
 
-    // +++ NUEVO: Corrutina del Protector Solar (Invencibilidad + Aura) +++
     private IEnumerator ProtectorSolarRoutine(float duration, float auraDamage, float auraRadius)
     {
         isInvincible = true;
 
-        // Cambio visual (Amarillo dorado para indicar protección)
         if (spriteRenderer != null) spriteRenderer.color = new Color(1f, 0.9f, 0.4f, 1f);
 
-        Debug.Log("¡Protector Solar activado! Invencible y quemando enemigos.");
+        UnityEngine.Debug.Log("¡Protector Solar activado! Invencible y quemando enemigos.");
 
         float timer = 0;
-        // Hacemos daño por 'ticks' (cada 0.5 segundos para no destruir la CPU ni instakillear por frames)
         float damageTickRate = 0.5f;
         float nextDamageTime = 0;
 
@@ -308,7 +308,6 @@ public class PlayerController : CharacterStats
         {
             timer += Time.deltaTime;
 
-            // Lógica del Aura de Daño
             if (Time.time >= nextDamageTime)
             {
                 Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, auraRadius);
@@ -316,12 +315,11 @@ public class PlayerController : CharacterStats
                 {
                     if (col.CompareTag("Player")) continue;
 
-                    // Usamos CharacterStats para dañar a CUALQUIER enemigo (Perros, Vecinos, etc.)
                     CharacterStats enemyStats = col.GetComponent<CharacterStats>();
                     if (enemyStats != null)
                     {
                         enemyStats.TakeDamage(auraDamage);
-                        Debug.Log("Aura quemó a " + col.name);
+                        UnityEngine.Debug.Log("Aura quemó a " + col.name);
                     }
                 }
                 nextDamageTime = Time.time + damageTickRate;
@@ -330,20 +328,17 @@ public class PlayerController : CharacterStats
             yield return null;
         }
 
-        // Desactivar efectos
         isInvincible = false;
         if (spriteRenderer != null) spriteRenderer.color = colorOriginal;
         activeSunscreenPowerUp = null;
-        Debug.Log("Protector Solar terminado.");
+        UnityEngine.Debug.Log("Protector Solar terminado.");
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // +++ MODIFICADO +++
-        // Si es invencible, podemos chocar con enemigos sin recibir daño
         if (isInvincible && collision.gameObject.CompareTag("Enemy"))
         {
-            Debug.Log("Choque con enemigo anulado por Protector Solar.");
+            UnityEngine.Debug.Log("Choque con enemigo anulado por Protector Solar.");
             return;
         }
 
@@ -354,11 +349,11 @@ public class PlayerController : CharacterStats
 
             if (collisionAngle > 0.7f)
             {
-                Debug.Log("Aterrizaste sobre el enemigo.");
+                UnityEngine.Debug.Log("Aterrizaste sobre el enemigo.");
             }
             else
             {
-                Debug.Log("Choque lateral con enemigo.");
+                UnityEngine.Debug.Log("Choque lateral con enemigo.");
                 Hit(damageOnContact);
             }
         }
@@ -366,8 +361,6 @@ public class PlayerController : CharacterStats
 
     private void HandleMelting()
     {
-        // +++ MODIFICADO +++ 
-        // El protector solar EVITA que te derritas
         if (isInvincible) return;
 
         if (currentHealth > 0)
@@ -397,9 +390,8 @@ public class PlayerController : CharacterStats
             Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
         }
 
-        // Dibujo opcional para ver el radio del aura cuando seleccionas al jugador (hardcoded visualmente)
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, 3.0f); // 3.0f es un ejemplo visual
+        Gizmos.DrawWireSphere(transform.position, 3.0f);
     }
 
     public void RechargeAmmo(int amount)
