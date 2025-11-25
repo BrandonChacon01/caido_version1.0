@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// +++ AGREGADO: Para evitar ambigüedad con Debug +++
+using Debug = UnityEngine.Debug;
+
 public class PlayerController : CharacterStats
 {
     // --- Variables de Movimiento y Disparo ---
@@ -209,6 +212,33 @@ public class PlayerController : CharacterStats
         }
     }
 
+    // +++ NUEVO: Método para muerte instantánea que ignora protecciones +++
+    public void MuerteInstantanea()
+    {
+        Debug.Log("¡Muerte instantánea! El jugador cayó en la DeathZone.");
+
+        // Detener cualquier power-up activo
+        if (activeSunscreenPowerUp != null)
+        {
+            StopCoroutine(activeSunscreenPowerUp);
+            activeSunscreenPowerUp = null;
+        }
+
+        if (activeSpeedPowerUp != null)
+        {
+            StopCoroutine(activeSpeedPowerUp);
+            activeSpeedPowerUp = null;
+        }
+
+        // Restaurar valores y color
+        isInvincible = false;
+        if (spriteRenderer != null) spriteRenderer.color = colorOriginal;
+        moveSpeed = velocidadOriginal;
+
+        // Forzar muerte directamente
+        Die();
+    }
+
     protected override void Die()
     {
         Debug.Log("El jugador ha muerto.");
@@ -263,15 +293,15 @@ public class PlayerController : CharacterStats
     private IEnumerator ProtectorSolarRoutine(float duration, float auraDamage, float auraRadius)
     {
         isInvincible = true;
-        
+
         // Cambio visual (Amarillo dorado para indicar protección)
-        if(spriteRenderer != null) spriteRenderer.color = new Color(1f, 0.9f, 0.4f, 1f);
+        if (spriteRenderer != null) spriteRenderer.color = new Color(1f, 0.9f, 0.4f, 1f);
 
         Debug.Log("¡Protector Solar activado! Invencible y quemando enemigos.");
 
         float timer = 0;
         // Hacemos daño por 'ticks' (cada 0.5 segundos para no destruir la CPU ni instakillear por frames)
-        float damageTickRate = 0.5f; 
+        float damageTickRate = 0.5f;
         float nextDamageTime = 0;
 
         while (timer < duration)
