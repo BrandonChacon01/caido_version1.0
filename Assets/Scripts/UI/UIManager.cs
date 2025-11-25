@@ -23,9 +23,12 @@ public class UIManager : MonoBehaviour
     private LevelTimer levelTimer;
     private PauseMenuController pauseMenuController;
 
+    [Header("Game Over UI Buttons")]
+    [Tooltip("Botón para iniciar una nueva run directamente desde el Game Over")]
+    public UnityEngine.UI.Button btnStartNewRun;
+
     private void Start()
     {
-        // Buscar el LevelTimer en la escena
         levelTimer = FindFirstObjectByType<LevelTimer>();
 
         if (levelTimer == null)
@@ -34,23 +37,22 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            // 🔹 NUEVO: Suscribirse al evento de tiempo agotado
             levelTimer.OnTimeUp += OnTimerExpired;
             UnityEngine.Debug.Log("[UIManager] ✅ Suscrito al evento OnTimeUp del LevelTimer");
         }
 
-        // Buscar el PauseMenuController
         pauseMenuController = FindFirstObjectByType<PauseMenuController>();
+
+        if (btnStartNewRun != null)
+            btnStartNewRun.onClick.AddListener(IniciarNuevaRun);
     }
 
-    // 🔹 NUEVO: Método que se ejecuta cuando el timer llega a 0
     private void OnTimerExpired()
     {
         UnityEngine.Debug.Log("[UIManager] ⏰ ¡Tiempo agotado! Mostrando Game Over");
         MostrarPanelGameOver();
     }
 
-    // 🔹 NUEVO: Importante desuscribirse para evitar memory leaks
     private void OnDestroy()
     {
         if (levelTimer != null)
@@ -60,9 +62,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Muestra el panel de Game Over y pausa el timer y el juego
-    /// </summary>
     public void MostrarPanelGameOver()
     {
         if (panelGameOver != null)
@@ -72,21 +71,17 @@ public class UIManager : MonoBehaviour
             if (HealthBar != null) HealthBar.SetActive(false);
             if (HeatBar != null) HeatBar.SetActive(false);
 
-            // 🔹 NUEVO: Pausar el juego completamente
             PauseManager.Instance.Pause(PauseReason.GameOver);
 
-            // Notificar al PauseMenuController que estamos en Game Over
             if (pauseMenuController != null)
             {
                 pauseMenuController.SetGameOverState(true);
             }
 
-            // Pausar el timer
             if (levelTimer != null)
             {
                 levelTimer.PauseTimer();
 
-                // Mostrar el tiempo total acumulado de la run
                 float currentLevelTime = levelTimer.TimeElapsed;
                 float totalRunTime = 0f;
 
@@ -109,47 +104,31 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Reinicia el nivel actual
-    /// </summary>
     public void ReiniciarNivel()
     {
-        // 🔹 NUEVO: Forzar reanudación antes de recargar
         PauseManager.Instance.ForceResume();
 
-        // Reactivar elementos del HUD
         if (HealthBar != null) HealthBar.SetActive(true);
         if (HeatBar != null) HeatBar.SetActive(true);
 
-        // Recargar la escena
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    /// <summary>
-    /// Vuelve al menú principal (método principal con logs de prueba)
-    /// </summary>
     public void GoToMainMenu()
     {
-        Debug.Log("[UIManager] GoToMainMenu() llamado DESDE Game Over");
+        UnityEngine.Debug.Log("[UIManager] GoToMainMenu() llamado DESDE Game Over");
 
-        // Forzar reanudación antes de cambiar de escena
         PauseManager.Instance.ForceResume();
-        Debug.Log("[UIManager] ForceResume() OK, cargando escena " + mainMenuSceneName);
+        UnityEngine.Debug.Log("[UIManager] ForceResume() OK, cargando escena " + mainMenuSceneName);
 
         SceneManager.LoadScene(mainMenuSceneName);
     }
 
-    /// <summary>
-    /// Vuelve al menú principal (alias para compatibilidad con referencias antiguas)
-    /// </summary>
     public void VolverAlMenuPrincipal()
     {
         GoToMainMenu();
     }
 
-    /// <summary>
-    /// Oculta el panel de Game Over y reanuda el timer
-    /// </summary>
     public void OcultarPanelGameOver()
     {
         if (panelGameOver != null)
@@ -159,20 +138,62 @@ public class UIManager : MonoBehaviour
             if (HealthBar != null) HealthBar.SetActive(true);
             if (HeatBar != null) HeatBar.SetActive(true);
 
-            // 🔹 NUEVO: Reanudar el juego
             PauseManager.Instance.Resume();
 
-            // Notificar al PauseMenuController
             if (pauseMenuController != null)
             {
                 pauseMenuController.SetGameOverState(false);
             }
 
-            // Reanudar el timer
             if (levelTimer != null)
             {
                 levelTimer.ResumeTimer();
             }
         }
+    }
+
+    /// <summary>
+    /// Inicia una nueva run (como si presionaras Jugar en MainMenu) directamente desde Game Over.
+    /// No regresa a MainMenu.
+    /// </summary>
+    public void IniciarNuevaRun()
+    {
+        // 1. OCULTAR Panel GameOver y HUD
+        if (panelGameOver != null) panelGameOver.SetActive(false);
+        if (HealthBar != null) HealthBar.SetActive(true);
+        if (HeatBar != null) HeatBar.SetActive(true);
+
+        // 2. REANUDAR EL JUEGO (IMPORTANTE)
+        if (PauseManager.Instance != null)
+        {
+            PauseManager.Instance.ForceResume();
+        }
+        Time.timeScale = 1f;
+
+        // 3. RESETEAR progreso e iniciar tracking estadístico igual que MainMenu
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.ResetProgress();
+            UnityEngine.Debug.Log("[UIManager][NuevaRun] Progreso del LevelManager reseteado");
+        }
+
+        if (GameStatsManager.Instance != null)
+        {
+            GameStatsManager.Instance.ResetStats();
+            UnityEngine.Debug.Log("[UIManager][NuevaRun] Estadísticas reseteadas");
+            GameStatsManager.Instance.StartTracking();
+            UnityEngine.Debug.Log("[UIManager][NuevaRun] Tracking de estadísticas iniciado");
+        }
+
+        if (SupabaseAuthManager.Instance != null)
+        {
+            // Aquí puedes poner tu lógica de autenticación si la requieres
+        }
+
+        LoadingPayload.UseLevelSystem = true;
+        LevelRandomizer.Instance.ResetSelection();
+        LevelRandomizer.Instance.GenerateRandomLevelSequence();
+
+        SceneManager.LoadScene("VideoIntro");
     }
 }

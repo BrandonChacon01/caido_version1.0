@@ -11,7 +11,8 @@ public class OlDDeathZone : MonoBehaviour
         PlayerController player = other.GetComponent<PlayerController>();
         if (player != null)
         {
-            player.Hit(9999f);
+            // Muerte instantánea que ignora cualquier protección o power-up
+            player.MuerteInstantanea();
             return;
         }
 
@@ -21,6 +22,5 @@ public class OlDDeathZone : MonoBehaviour
             Destroy(other.gameObject);
             return; // Salimos de la función
         }
-
     }
 }
