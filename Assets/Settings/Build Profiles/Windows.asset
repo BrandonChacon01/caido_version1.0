@@ -49,8 +49,6 @@ MonoBehaviour:
   - m_enabled: 1
     m_path: Assets/Scenes/Niveles/N5.unity
   - m_enabled: 1
-    m_path: Assets/Scenes/Niveles/N5_Test.unity
-  - m_enabled: 1
     m_path: Assets/Scenes/Interludios/Interludio1.unity
   - m_enabled: 1
     m_path: Assets/Scenes/Interludios/Interludio2.unity
